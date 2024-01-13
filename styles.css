@@ -1,13 +1,21 @@
+h1 {
+  font-size: 45px;
+  text-align: center;
+}
+
 .wrapper {
   display: grid;
   background: lightgray;
-  max-height: 1280px;
-  max-width: 1300px;
+  max-height: 1080px;
+  max-width: 1280px;
   grid-template-columns: 1fr 2fr 1fr;
   /* specifies how big each column is, usually 1280 = good screen size*/
   /* another way: use fractions 1fr, 2fr, etc */
   grid-template-rows: 400px 100px 100px;
   /* for ROWS the standard is 1080px */
+  gap: 5px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .show-stats {
