@@ -6,12 +6,11 @@ h1 {
 .wrapper {
   display: grid;
   background: lightgray;
-  max-height: 1080px;
   max-width: 1280px;
   grid-template-columns: 1fr 2fr 1fr;
   /* specifies how big each column is, usually 1280 = good screen size*/
   /* another way: use fractions 1fr, 2fr, etc */
-  grid-template-rows: 400px 100px 100px;
+  grid-template-rows: 500px 125px;
   /* for ROWS the standard is 1080px */
   gap: 5px;
   margin-left: auto;
@@ -24,7 +23,7 @@ h1 {
   background-color: yellow; */
   background-color: aqua;
   grid-column: 1;
-  grid-row: 1/ span 2;
+  grid-row: 1;
 }
 
 /* 1/ span 2 means start at 1, span 2 columns in width*/
@@ -32,23 +31,23 @@ h1 {
 .main-screen {
   background-color: deeppink;
   grid-column: 2;
-  grid-row: 1;
+  grid-row: 1/ span 2;
 }
 
 .add-tasks {
   background-color: khaki;
   grid-column: 3;
-  grid-row: 1/ span 2;
+  grid-row: 1;
 }
 
 .show-ai-feedback {
   background-color: lime;
-  grid-column: 2;
+  grid-column: 3;
   grid-row: 2;
 }
 
 .remove-tasks {
   background-color: orange;
-  grid-column: 1/ span 3;
-  grid-row: 3
+  grid-column: 1;
+  grid-row: 2;
 }
