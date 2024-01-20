@@ -11,11 +11,39 @@
       <h1>Course Planner</h1>
     </header>
     <div class="wrapper">
-      <div class="show-stats">1</div>
-      <div class="main-screen">2</div>
-      <div class="add-tasks">3</div>
-      <div class="show-ai-feedback">4</div>
-      <div class="remove-tasks">5</div>
+      <div class="show-stats">
+        <h2> YOUR STATISTICS </h2>
+        <h3> Total duration: </h3>
+        <h3> Workload level: </h3>
+        <h3> Progress towards goal: </h3>
+      </div>
+
+      <div class="main-screen">
+        <h2> YOUR TASKS </h2>
+      </div>
+
+      <div class="add-tasks">
+        <h2> ADD A TASK </h2>
+        <form>
+          <label for="tname">Task name:</label><br>
+          <input type="text" id="tname" name="tname"><br>
+          <label for="duration">Duration:</label><br>
+          <input type="text" id="duration" name="duration"><br>
+          <label for="resources">Resources required:</label><br>
+          <input type="text" id="duration" name="duration"><br>
+
+        </form>
+      </div>
+
+      <div class="show-ai-feedback">
+        <h2> FEEDBACK: </h2>
+        <h3> AI feedback based on your statistics will be placed here </h3>
+      </div>
+
+      <div class="remove-tasks">
+        <h2> REMOVE A TASK </h2>
+        <h3> Drag here </h3>
+      </div>
     </div>
   </body>
 </html>
