@@ -1,8 +1,3 @@
-h1 {
-  font-size: 45px;
-  text-align: center;
-}
-
 .wrapper {
   display: grid;
   background: lightgray;
@@ -10,44 +5,87 @@ h1 {
   grid-template-columns: 1fr 2fr 1fr;
   /* specifies how big each column is, usually 1280 = good screen size*/
   /* another way: use fractions 1fr, 2fr, etc */
-  grid-template-rows: 500px 125px;
+  grid-template-rows: 400px 225px;
   /* for ROWS the standard is 1080px */
   gap: 5px;
   margin-left: auto;
   margin-right: auto;
 }
 
-.show-stats {
-  /* grid-column: 2 / 4;
-  grid-row: 1 / 3;
-  background-color: yellow; */
-  background-color: aqua;
-  grid-column: 1;
-  grid-row: 1;
+
+/* HEADERS (GENERIC): */
+
+h1 {
+  font-size: 45px;
+  text-align: center;
 }
 
-/* 1/ span 2 means start at 1, span 2 columns in width*/
+h2 {
+  font-size: 25px;
+  text-align: center;
+  font-family: "Bradley Hand", "cursive";
+  color: rgb(54, 53, 53);
+  /* because actual black is too bold */
+}
+
+h3 {
+  text-align: center;
+  font-size: 20px;
+  color: rgb(54, 53, 53);
+}
+
+/* GRID SECTIONS: */
 
 .main-screen {
-  background-color: deeppink;
+  background-color: rgb(203, 232, 240);
   grid-column: 2;
   grid-row: 1/ span 2;
 }
 
+/* this one in particular needs to be bigger */
+.main-screen h2 {
+  font-size: 40px;
+}
+
+.show-stats {
+  /* grid-column: 2 / 4;
+  grid-row: 1 / 3;
+  background-color: yellow; */
+  background-color: rgb(172, 229, 240);
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.show-stats h4 {
+  margin-bottom: 40px;
+  text-align: center;
+  font-size: 17px;
+  font-family: "Comic Sans MS", "Comic Sans", "cursive";
+  color: blueviolet;
+}
+
+/* 1/ span 2 means start at 1, span 2 columns in width*/
+
 .add-tasks {
-  background-color: khaki;
+  background-color: rgb(172, 229, 240);
   grid-column: 3;
   grid-row: 1;
 }
 
+.add-tasks form {
+  margin-top: 35px;
+  text-align: center;
+  font-size: 20px;
+}
+
 .show-ai-feedback {
-  background-color: lime;
+  background-color: rgb(136, 205, 219);
   grid-column: 3;
   grid-row: 2;
 }
 
 .remove-tasks {
-  background-color: orange;
+  background-color: rgb(136, 205, 219);
   grid-column: 1;
   grid-row: 2;
 }
