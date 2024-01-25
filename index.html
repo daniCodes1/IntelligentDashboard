@@ -23,19 +23,20 @@
 
       <div class="main-screen">
         <h2> YOUR TASKS </h2>
-        <div class="box"> English discussion post
+        <div class="box" draggable="true"> English discussion
+          post
           <h5> [5 minutes] </h5>
         </div>
-        <div class="box"> stats webwork 6
+        <div class="box" draggable="true"> stats webwork 6
           <h5> [60 minutes] </h5>
         </div>
-        <div class="box"> buy birthday card
+        <div class="box" draggable="true"> buy birthday card
           <h5> [25 minutes]</h5>
         </div>
-        <div class="box"> vacuum kitchen
+        <div class="box" draggable="true"> vacuum kitchen
           <h5> [15 minutes] </h5>
         </div>
-        <div class="box"> finish English essay
+        <div class="box" draggable="true"> finish English essay
           <h5> [90 minutes] </h5>
         </div>
       </div>
@@ -44,12 +45,11 @@
         <h2> ADD A TASK </h2>
         <form>
           <label for="tname">Task name:</label><br>
-          <input type="text" id="tname" name="tname"><br> <br><br>
+          <input type="text" id="tname" name="tname"><br><br><br>
           <label for="duration">Duration (minutes):</label><br>
-          <input type="text" id="duration" name="duration"><br><br> <br>
+          <input type="text" id="duration" name="duration"><br><br><br>
           <label for="resources">Resources required:</label><br>
           <input type="text" id="duration" name="duration"><br>
-
         </form>
       </div>
 
@@ -58,10 +58,12 @@
         <h3> AI feedback based on your statistics will be placed here </h3>
       </div>
 
-      <div class="remove-tasks">
+      <div class="remove-tasks" ondrop="dropHandler(event);">
+        <!-- this here -->
         <h2> REMOVE A TASK </h2>
         <h3> Drag here </h3>
       </div>
     </div>
+    <script src="app.js"> </script>
   </body>
 </html>
