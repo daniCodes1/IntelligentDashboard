@@ -7,12 +7,33 @@
 
 function allowDrop(ev) {
     ev.preventDefault();
+
 }
 
 function drop(ev) {
     ev.preventDefault();
-    console.log("Hello! This functionality works")
+    console.log("Hello! This functionality works");
+    var draggedId = ev.dataTransfer.getData("text/plain");
+    // Get a reference to the dragged element
+    var draggedElement = document.getElementById(draggedId);
+
+    // Check if the dragged element existss
+    if (draggedElement) {
+        // Remove the dragged element from the DOM
+        draggedElement.parentNode.removeChild(draggedElement);
+    }
+
+    // var myDiv = ev.target;
+
+    // // Check if the div element exists
+    // if (myDiv) {
+    //     // Remove the div from the DOM
+    //     myDiv.parentNode.removeChild(myDiv);
+
+    // }
 }
+
+
 /*
 1.) Tasks to be able to be removed (Dani)
 
