@@ -23,7 +23,8 @@
 
       <div class="main-screen">
         <h2> YOUR TASKS </h2>
-        <div class="box" draggable="true"> English discussion
+        <div class="box" draggable="true"> English
+          discussion
           post
           <h5> [5 minutes] </h5>
         </div>
@@ -58,7 +59,8 @@
         <h3> AI feedback based on your statistics will be placed here </h3>
       </div>
 
-      <div class="remove-tasks" ondrop="dropHandler(event);">
+      <div class="remove-tasks" ondrop="drop(event)"
+        ondragover="allowDrop(event)">
         <!-- this here -->
         <h2> REMOVE A TASK </h2>
         <h3> Drag here </h3>
