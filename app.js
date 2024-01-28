@@ -1,10 +1,18 @@
 "use strict"
 
-const dropHandler = function (event) {
-    console.log("Heyo");
-    event.preventDefault();
+// const dropHandler = function (event) {
+//     console.log("Heyo");
+//     event.preventDefault();
+// }
+
+function allowDrop(ev) {
+    ev.preventDefault();
 }
 
+function drop(ev) {
+    ev.preventDefault();
+    console.log("Hello! This functionality works")
+}
 /*
 1.) Tasks to be able to be removed (Dani)
 
