@@ -5,15 +5,22 @@
 //     event.preventDefault();
 // }
 
-function allowDrop(ev) {
-    ev.preventDefault();
+function allowDrop(event) {
+    event.preventDefault();
 
 }
 
-function drop(ev) {
-    ev.preventDefault();
+function drag(event) {
+    // Set the data that is being transferred during the drag
+    event.dataTransfer.setData("text/plain", event.target.id);
+    // Set ONLY THE INNER TEXT DATA of each task
+    event.dataTransfer.setData("text/plain-content", event.target.innerText);
+}
+
+function drop(event) {
+    event.preventDefault();
     console.log("Hello! This functionality works");
-    var draggedId = ev.dataTransfer.getData("text/plain");
+    var draggedId = event.dataTransfer.getData("text/plain");
     // Get a reference to the dragged element
     var draggedElement = document.getElementById(draggedId);
 
@@ -21,6 +28,10 @@ function drop(ev) {
     if (draggedElement) {
         // Remove the dragged element from the DOM
         draggedElement.parentNode.removeChild(draggedElement);
+
+        // Print out the task that was completed and removed
+        var textContent = event.dataTransfer.getData("text/plain-content");
+        console.log("The following task was completed: ", textContent);
     }
 
     // var myDiv = ev.target;
