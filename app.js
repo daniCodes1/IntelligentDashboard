@@ -1,5 +1,7 @@
 "use strict";
 
+let countdown = 0;
+
 document.querySelector(".add").addEventListener("click", function () {
   event.preventDefault();
   var div = document.createElement("div");
@@ -15,6 +17,13 @@ document.querySelector(".add").addEventListener("click", function () {
 
   div.innerHTML = `${newTaskName} <h5>[${newTaskDuration} minutes]</h5>`;
   document.querySelector(".main-screen").appendChild(div);
+
+  // add the duration to total duration:
+  //   let currentDuration = document.getElementById("countdown").textContent;
+  //   console.log(currentDuration);
+  countdown += Number(newTaskDuration);
+  let header = document.getElementById("countdown");
+  header.innerHTML = countdown;
 });
 
 function allowDrop(event) {
