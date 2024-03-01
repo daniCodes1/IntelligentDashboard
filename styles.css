@@ -103,6 +103,10 @@ h5 {
   font-size: 20px;
 }
 
+.add {
+  margin-top: 20px;
+}
+
 .show-ai-feedback {
   background-color: rgb(136, 205, 219);
   grid-column: 3;
