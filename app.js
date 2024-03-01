@@ -12,6 +12,9 @@ document.querySelector(".add").addEventListener("click", function () {
 
   const idName = newTaskName.replace(/\s+/g, ""); // remove spaces for ID name
   div.setAttribute("id", `${idName}-id`);
+
+  div.innerHTML = `${newTaskName} <h5>[${newTaskDuration} minutes]</h5>`;
+  document.querySelector(".main-screen").appendChild(div);
 });
 
 function allowDrop(event) {
