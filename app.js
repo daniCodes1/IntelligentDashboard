@@ -1,6 +1,7 @@
 "use strict";
 
 let countdown = 0;
+let difficulty = [0, 0]; // difficulty, # of elements
 
 document.querySelector(".add").addEventListener("click", function () {
   event.preventDefault();
@@ -11,19 +12,57 @@ document.querySelector(".add").addEventListener("click", function () {
 
   const newTaskName = document.getElementById("tname").value;
   const newTaskDuration = document.getElementById("duration").value;
+  const newTaskDifficulty = document.getElementById("difficulty").value;
 
-  const idName = newTaskName.replace(/\s+/g, ""); // remove spaces for ID name
+  // set id
+  const idName = newTaskName.replace(/\s+/g, "");
   div.setAttribute("id", `${idName}`);
 
-  div.innerHTML = `${newTaskName} <h5 id="${idName}-time" data-duration="${newTaskDuration}">[${newTaskDuration} minutes]</h5>`;
+  div.innerHTML = `${newTaskName} <h5 id="${idName}-time" data-duration="${newTaskDuration}" data-difficulty="${newTaskDifficulty}" >[${newTaskDuration} minutes]</h5>`;
   console.log(`${idName}-time`);
   document.querySelector(".main-screen").appendChild(div);
 
   // add the duration to total duration:
-  countdown += Number(newTaskDuration);
+  updateDuration(newTaskDuration, true);
+
+  updateDifficulty(newTaskDifficulty, true);
+});
+
+function updateDuration(duration, state) {
+  if (state) {
+    countdown += Number(duration);
+  } else {
+    countdown -= Number(duration);
+  }
   let header = document.getElementById("countdown");
   header.innerHTML = countdown;
-});
+}
+
+function updateDifficulty(level, state) {
+  if (state) {
+    difficulty[0] += Number(level);
+    difficulty[1] += 1;
+  } else {
+    difficulty[0] -= Number(level);
+    console.log(typeof Number(level));
+    difficulty[1] -= 1;
+  }
+  const status = document.getElementById("stat-difficulty");
+  if (difficulty[1] == 0) {
+    // denominator = 0
+    status.innerHTML = "Easy";
+  } else {
+    const avgDifficulty = difficulty[0] / difficulty[1];
+
+    if (avgDifficulty < 4) {
+      status.innerHTML = "Easy";
+    } else if (avgDifficulty <= 7) {
+      status.innerHTML = "Medium";
+    } else {
+      status.innerHTML = "Difficult";
+    }
+  }
+}
 
 function allowDrop(event) {
   event.preventDefault();
@@ -47,21 +86,22 @@ function drop(event) {
   // Get a reference to the dragged element
   var draggedElement = document.getElementById(draggedId);
 
-  // Check if the dragged element existss
+  // Check if the dragged element exists
   if (draggedElement) {
     // Update time
     let element = document.getElementById(`${draggedId}-time`);
     const duration = element.getAttribute("data-duration");
-    countdown -= String(duration);
-    let header = document.getElementById("countdown");
-    header.innerHTML = countdown;
+    updateDuration(duration);
+
+    // Update difficulty
+    updateDifficulty(element.getAttribute("data-difficulty"), false);
 
     // Remove the dragged element from the DOM
     const textContent = event.dataTransfer.getData("text/plain-content");
     draggedElement.parentNode.removeChild(draggedElement);
 
     // Print out the task that was completed and removed
-    console.log("The following task was completed: ", textContent);
+    alert(`The following task was completed: ${textContent}`);
   }
 }
 
