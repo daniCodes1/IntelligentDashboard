@@ -1,38 +1,60 @@
 "use strict";
 
 let countdown = 0;
-let difficulty = [0, 0]; // difficulty, # of elements
+let difficulty = [0, 0]; // represents difficulty, # of elements
 
 document.querySelector(".add").addEventListener("click", function () {
   event.preventDefault();
-  let div = document.createElement("div");
-  div.setAttribute("class", "box");
-  div.setAttribute("draggable", "true");
-  div.setAttribute("ondragstart", "drag(event)");
+  let dur = document.getElementById("duration").value;
+  let diff = document.getElementById("difficulty").value;
+  let newTaskName = document.getElementById("tname").value;
 
-  const newTaskName = document.getElementById("tname").value;
-  const newTaskDuration = document.getElementById("duration").value;
-  const newTaskDifficulty = document.getElementById("difficulty").value;
+  const newTaskDuration = Number(dur);
+  const newTaskDifficulty = Number(diff);
 
-  // set id
-  const idName = newTaskName.replace(/\s+/g, "");
-  div.setAttribute("id", `${idName}`);
+  if (newTaskName == "" || newTaskDuration == "" || newTaskDifficulty == "") {
+    alert("Please fill in all fields.");
+  } else if (!(Number.isInteger(newTaskDuration) && newTaskDuration > 0)) {
+    console.log(newTaskDuration);
+    alert("The duration should be a positive integer");
+  } else if (
+    !(
+      Number.isInteger(newTaskDifficulty) &&
+      newTaskDifficulty > 0 &&
+      newTaskDifficulty <= 10
+    )
+  ) {
+    alert("Difficulty should be a a positive integer less than or equal to 10");
+  } else {
+    let div = document.createElement("div");
+    div.setAttribute("class", "box");
+    div.setAttribute("draggable", "true");
+    div.setAttribute("ondragstart", "drag(event)");
 
-  div.innerHTML = `${newTaskName} <h5 id="${idName}-time" data-duration="${newTaskDuration}" data-difficulty="${newTaskDifficulty}" >[${newTaskDuration} minutes]</h5>`;
-  console.log(`${idName}-time`);
-  document.querySelector(".main-screen").appendChild(div);
+    // Set ID
+    const idName = newTaskName.replace(/\s+/g, "");
+    div.setAttribute("id", `${idName}`);
+    // Create task
+    div.innerHTML = `${newTaskName} <h5 id="${idName}-time" data-duration="${newTaskDuration}" data-difficulty="${newTaskDifficulty}" >[${newTaskDuration} minutes]</h5>`;
+    console.log(`${idName}-time`);
+    document.querySelector(".main-screen").appendChild(div);
 
-  // add the duration to total duration:
-  updateDuration(newTaskDuration, true);
+    // Add the duration to total duration:
+    updateDuration(newTaskDuration, true);
 
-  updateDifficulty(newTaskDifficulty, true);
+    updateDifficulty(newTaskDifficulty, true);
+  }
+
+  document.getElementById("duration").value = "";
+  document.getElementById("difficulty").value = "";
+  document.getElementById("tname").value = "";
 });
 
 function updateDuration(duration, state) {
   if (state) {
-    countdown += Number(duration);
+    countdown += duration;
   } else {
-    countdown -= Number(duration);
+    countdown -= duration;
   }
   let header = document.getElementById("countdown");
   header.innerHTML = countdown;
@@ -40,16 +62,15 @@ function updateDuration(duration, state) {
 
 function updateDifficulty(level, state) {
   if (state) {
-    difficulty[0] += Number(level);
+    difficulty[0] += level;
     difficulty[1] += 1;
   } else {
-    difficulty[0] -= Number(level);
-    console.log(typeof Number(level));
+    difficulty[0] -= level;
     difficulty[1] -= 1;
   }
   const status = document.getElementById("stat-difficulty");
   if (difficulty[1] == 0) {
-    // denominator = 0
+    // case: denominator = 0
     status.innerHTML = "Easy";
   } else {
     const avgDifficulty = difficulty[0] / difficulty[1];
@@ -90,11 +111,11 @@ function drop(event) {
   if (draggedElement) {
     // Update time
     let element = document.getElementById(`${draggedId}-time`);
-    const duration = element.getAttribute("data-duration");
+    const duration = Number(element.getAttribute("data-duration"));
     updateDuration(duration);
 
     // Update difficulty
-    updateDifficulty(element.getAttribute("data-difficulty"), false);
+    updateDifficulty(Number(element.getAttribute("data-difficulty")), false);
 
     // Remove the dragged element from the DOM
     const textContent = event.dataTransfer.getData("text/plain-content");
