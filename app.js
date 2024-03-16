@@ -3,6 +3,16 @@
 let countdown = 0;
 let difficulty = [0, 0]; // represents difficulty, # of elements
 
+document.querySelector(".quote").addEventListener("click", getQuote);
+
+async function getQuote() {
+  const response = await fetch("https://api.adviceslip.com/advice");
+  var data = await response.json();
+
+  const displayQuote = document.getElementById("user-quote");
+  displayQuote.innerHTML = data.slip.advice;
+}
+
 document.querySelector(".add").addEventListener("click", function () {
   event.preventDefault();
   let dur = document.getElementById("duration").value;
@@ -55,6 +65,9 @@ function updateDuration(duration, state) {
     countdown += duration;
   } else {
     countdown -= duration;
+    if (countdown == 0) {
+      alert("Congratulations! All tasks are finished, productivity god!");
+    }
   }
   let header = document.getElementById("countdown");
   header.innerHTML = countdown;
@@ -122,7 +135,7 @@ function drop(event) {
     draggedElement.parentNode.removeChild(draggedElement);
 
     // Print out the task that was completed and removed
-    alert(`The following task was completed: ${textContent}`);
+    console.log(`The following task was completed: ${textContent}`);
   }
 }
 
