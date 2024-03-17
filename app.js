@@ -2,62 +2,67 @@
 
 let countdown = 0;
 let difficulty = [0, 0]; // represents difficulty, # of elements
-
-document.querySelector(".quote").addEventListener("click", getQuote);
-
-async function getQuote() {
-  const response = await fetch("https://api.adviceslip.com/advice");
-  var data = await response.json();
-
-  const displayQuote = document.getElementById("user-quote");
-  displayQuote.innerHTML = data.slip.advice;
-}
+let tasks = 0;
 
 document.querySelector(".add").addEventListener("click", function () {
   event.preventDefault();
-  let dur = document.getElementById("duration").value;
-  let diff = document.getElementById("difficulty").value;
-  let newTaskName = document.getElementById("tname").value;
-
-  const newTaskDuration = Number(dur);
-  const newTaskDifficulty = Number(diff);
-
-  if (newTaskName == "" || newTaskDuration == "" || newTaskDifficulty == "") {
-    alert("Please fill in all fields.");
-  } else if (!(Number.isInteger(newTaskDuration) && newTaskDuration > 0)) {
-    console.log(newTaskDuration);
-    alert("The duration should be a positive integer");
-  } else if (
-    !(
-      Number.isInteger(newTaskDifficulty) &&
-      newTaskDifficulty > 0 &&
-      newTaskDifficulty <= 10
-    )
-  ) {
-    alert("Difficulty should be a a positive integer less than or equal to 10");
+  if (tasks >= 10) {
+    alert("You are at the maximum number of tasks");
   } else {
-    let div = document.createElement("div");
-    div.setAttribute("class", "box");
-    div.setAttribute("draggable", "true");
-    div.setAttribute("ondragstart", "drag(event)");
+    let dur = document.getElementById("duration").value;
+    let diff = document.getElementById("difficulty").value;
+    let newTaskName = document.getElementById("tname").value;
 
-    // Set ID
-    const idName = newTaskName.replace(/\s+/g, "");
-    div.setAttribute("id", `${idName}`);
-    // Create task
-    div.innerHTML = `${newTaskName} <h5 id="${idName}-time" data-duration="${newTaskDuration}" data-difficulty="${newTaskDifficulty}" >[${newTaskDuration} minutes]</h5>`;
-    console.log(`${idName}-time`);
-    document.querySelector(".main-screen").appendChild(div);
+    const newTaskDuration = Number(dur);
+    const newTaskDifficulty = Number(diff);
 
-    // Add the duration to total duration:
-    updateDuration(newTaskDuration, true);
+    if (newTaskName == "" || newTaskDuration == "" || newTaskDifficulty == "") {
+      alert("Please fill in all fields.");
+    } else if (!(Number.isInteger(newTaskDuration) && newTaskDuration > 0)) {
+      console.log(newTaskDuration);
+      alert("The duration should be a positive integer");
+    } else if (
+      !(
+        Number.isInteger(newTaskDifficulty) &&
+        newTaskDifficulty > 0 &&
+        newTaskDifficulty <= 10
+      )
+    ) {
+      alert(
+        "Difficulty should be a a positive integer less than or equal to 10"
+      );
+    } else {
+      let div = document.createElement("div");
+      div.setAttribute("class", "box");
+      div.setAttribute("draggable", "true");
+      div.setAttribute("ondragstart", "drag(event)");
 
-    updateDifficulty(newTaskDifficulty, true);
+      // Set ID
+      const idName = newTaskName.replace(/\s+/g, "");
+      div.setAttribute("id", `${idName}`);
+      // Create task
+      div.innerHTML = `${newTaskName} <h5 id="${idName}-time" data-duration="${newTaskDuration}" data-difficulty="${newTaskDifficulty}" >[${newTaskDuration} minutes]</h5>`;
+      console.log(`${idName}-time`);
+
+      const leftChildren = document.querySelector(".column1").children.length;
+      if (leftChildren < 5) {
+        document.querySelector(".column1").appendChild(div);
+        console.log(`Tasks on left: ${leftChildren}`);
+      } else {
+        document.querySelector(".column2").appendChild(div);
+      }
+
+      updateDuration(newTaskDuration, true);
+
+      updateDifficulty(newTaskDifficulty, true);
+
+      tasks++;
+
+      document.getElementById("duration").value = "";
+      document.getElementById("difficulty").value = "";
+      document.getElementById("tname").value = "";
+    }
   }
-
-  document.getElementById("duration").value = "";
-  document.getElementById("difficulty").value = "";
-  document.getElementById("tname").value = "";
 });
 
 function updateDuration(duration, state) {
@@ -76,7 +81,7 @@ function updateDuration(duration, state) {
 function updateDifficulty(level, state) {
   if (state) {
     difficulty[0] += level;
-    difficulty[1] += 1;
+    difficulty[1]++;
   } else {
     difficulty[0] -= level;
     difficulty[1] -= 1;
@@ -133,12 +138,22 @@ function drop(event) {
     // Remove the dragged element from the DOM
     const textContent = event.dataTransfer.getData("text/plain-content");
     draggedElement.parentNode.removeChild(draggedElement);
+    tasks--;
 
     // Print out the task that was completed and removed
     console.log(`The following task was completed: ${textContent}`);
   }
 }
 
+document.querySelector(".quote").addEventListener("click", getQuote);
+
+async function getQuote() {
+  const response = await fetch("https://api.adviceslip.com/advice");
+  var data = await response.json();
+
+  const displayQuote = document.getElementById("user-quote");
+  displayQuote.innerHTML = data.slip.advice;
+}
 /*
 1.) Tasks to be able to be removed (Dani)
 
