@@ -11,14 +11,19 @@
       <h1>Productivity Planner</h1>
     </header>
     <div class="wrapper">
-      <div class="show-stats">
+      <div class="stats">
         <h2> YOUR STATISTICS </h2>
         <h3> Duration left: </h3>
         <h4 id="countdown"> 0 minutes </h4>
         <h3> Difficulty level: </h3>
         <h4 id="stat-difficulty"> Easy </h4>
-        <h3> Progress towards goal: </h3>
-        <h4> 0% </h4>
+        <!-- <h3> Progress towards goal: </h3>
+        <h4> 0% </h4> -->
+
+        <h3> Need a boost? </h3>
+        <button class="quote"> Motivational Quote </button>
+        <h3 class="user-quote hidden"> </h3>
+
       </div>
 
       <div class="main-screen">
@@ -68,13 +73,10 @@
 
       </div> -->
 
-      <div class="get-quote">
-        <h2> NEED A BOOST? </h2>
-        <button class="quote"> Motivational Quote </button>
-        <h3 id="user-quote"> </h3>
+      <div class="timer-class">
 
-        <button class="quote"> Pomodoro Timer </button>
-        <h3 id="set-timer"> </h3>
+        <h3> Set timer: </h3>
+        <button class="study-timer"> Pomodoro Timer </button>
       </div>
 
       <div class="remove-tasks" ondrop="drop(event)"
