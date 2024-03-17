@@ -3,10 +3,11 @@
 let countdown = 0;
 let difficulty = [0, 0]; // represents difficulty, # of elements
 let tasks = 0;
+let timerRound = 0;
 
 document.querySelector(".add").addEventListener("click", function () {
   event.preventDefault();
-  if (tasks >= 10) {
+  if (tasks >= 12) {
     alert("You are at the maximum number of tasks");
   } else {
     let dur = document.getElementById("duration").value;
@@ -16,8 +17,13 @@ document.querySelector(".add").addEventListener("click", function () {
     const newTaskDuration = Number(dur);
     const newTaskDifficulty = Number(diff);
 
-    if (newTaskName == "" || newTaskDuration == "" || newTaskDifficulty == "") {
+    if (newTaskName == "" || dur == "" || diff == "") {
       alert("Please fill in all fields.");
+    } else if (newTaskName.length > 25) {
+      console.log(newTaskName.length);
+      alert("Task name must be under 25 characters");
+    } else if (newTaskDifficulty == 0 || newTaskDuration == 0) {
+      alert("difficulty and duration cannot be 0");
     } else if (!(Number.isInteger(newTaskDuration) && newTaskDuration > 0)) {
       console.log(newTaskDuration);
       alert("The duration should be a positive integer");
@@ -45,7 +51,7 @@ document.querySelector(".add").addEventListener("click", function () {
       console.log(`${idName}-time`);
 
       const leftChildren = document.querySelector(".column1").children.length;
-      if (leftChildren < 5) {
+      if (leftChildren < 6) {
         document.querySelector(".column1").appendChild(div);
         console.log(`Tasks on left: ${leftChildren}`);
       } else {
@@ -145,15 +151,87 @@ function drop(event) {
   }
 }
 
+// Fetch Quote
 document.querySelector(".quote").addEventListener("click", getQuote);
 
 async function getQuote() {
-  const response = await fetch("https://api.adviceslip.com/advice");
-  var data = await response.json();
+  try {
+    const displayQuote = document.querySelector(".user-quote");
+    displayQuote.innerHTML = "";
+    displayQuote.classList.add("spinning");
+    // Get the element where you want to show the loading animation
+    // const loadingText = document.querySelector(".user-quote");
+    // Set the inner text of the element to the spinning animation
 
-  const displayQuote = document.getElementById("user-quote");
-  displayQuote.innerHTML = data.slip.advice;
+    const response = await fetch("https://api.adviceslip.com/advice");
+    var data = await response.json();
+
+    displayQuote.innerHTML = data.slip.advice;
+
+    displayQuote.classList.remove("spinning");
+    displayQuote.classList.remove("hidden");
+  } catch (err) {
+    alert(err);
+  }
 }
+
+// Timer functionality
+/* Pomodoro technique:
+25 minutes of work broken into 5 minute breaks
+every 4 consecutive interals u get a 20 minute break
+*/
+
+document.querySelector(".study-timer").addEventListener("click", runPomodoro);
+
+// 25 minutes of work
+function runPomodoro() {
+  timerRound++;
+  console.log(timerRound);
+  if (timerRound == 4) {
+    timerRound = 0; // set back to 0 intervals of work time
+    setTimeout(doTwentyBreak, 25 * 60 * 1000); // after 25 mins of work, get a 20 minute break
+  } else {
+    setTimeout(doFiveBreak, 25 * 60 * 1000); // after 25 mins of work, get a 5 minute break
+  }
+}
+
+// Five minute break
+function doFiveBreak() {
+  setTimeout(runPomodoro, 5 * 60 * 1000);
+}
+
+// Twenty minute break
+function doTwentyBreak() {
+  setTimeout(runPomodoro, 20 * 60 * 1000);
+}
+
+// TESTING PURPOSES ONLY (shortened version):
+
+// function runPomodoro() {
+//   timerRound++;
+//   console.log(timerRound);
+//   if (timerRound == 4) {
+//     timerRound = 0; // set back to intervals of work time
+//     console.log("Working for 5 seconds");
+//     setTimeout(doTwentyBreak, 5000); // after 25 mins of work, get a 20 minute break
+//   } else {
+//     console.log("Working for 5 seconds");
+//     setTimeout(doFiveBreak, 5000); // after 25 mins of work, get a 5 minute break
+//   }
+// }
+
+// // Five minute break
+// function doFiveBreak() {
+//   console.log("Running 10 second break");
+//   setTimeout(runPomodoro, 10000);
+// }
+
+// // Twenty minute break
+// function doTwentyBreak() {
+//   console.log("Running 7 second break");
+//   setTimeout(runPomodoro, 7000);
+// }
+
 /*
 1.) Tasks to be able to be removed (Dani)
 
