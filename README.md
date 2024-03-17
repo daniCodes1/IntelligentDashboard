@@ -1,2 +1,2 @@
 # IntelligentDashboard
-An intelligent dashboard to manage your day see your tasks be gone
+An intelligent dashboard to manage your daily tasks using real-time statistics and productivity recommendations.
