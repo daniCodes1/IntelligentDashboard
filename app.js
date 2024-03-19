@@ -182,65 +182,146 @@ every 4 consecutive interals u get a 20 minute break
 */
 
 document.querySelector(".study-timer").addEventListener("click", runPomodoro);
+document.querySelector(".stop-timer").addEventListener("click", stopPomodoro);
+// Show time section
+const timerDisplay = document.querySelector(".update-timer");
+// Display the elapsed time only
+const displayTime = document.querySelector(".current");
+const link = document.querySelector(".pomodoro-link");
 
-// 25 minutes of work
+let startTime;
+let intervalID; // to stop it later
+let timeoutID;
+
+function stopPomodoro() {
+  clearInterval(intervalID);
+  clearTimeout(timeoutID);
+  timerRound = 0;
+  displayTime.innerHTML = "";
+  timerDisplay.classList.add("hidden");
+  link.classList.remove("hidden");
+  link.classList.add("pomodoro-link");
+}
+
 function runPomodoro() {
+  // Update which round of Pomodoro
   timerRound++;
-  console.log(timerRound);
+  link.classList.remove("pomodoro-link");
+  link.classList.add("hidden");
+  // Set appropriate timer
   if (timerRound == 4) {
     timerRound = 0; // set back to 0 intervals of work time
-    setTimeout(doTwentyBreak, 25 * 60 * 1000); // after 25 mins of work, get a 20 minute break
+    showTimer();
+    timeoutID = setTimeout(doTwentyBreak, 25 * 60 * 1000); // after 25 mins of work, get a 20 minute break
   } else {
-    setTimeout(doFiveBreak, 25 * 60 * 1000); // after 25 mins of work, get a 5 minute break
+    showTimer();
+    timeoutID = setTimeout(doFiveBreak, 25 * 60 * 1000); // after 25 mins of work, get a 5 minute break
   }
 }
 
-// Five minute break
-function doFiveBreak() {
-  setTimeout(runPomodoro, 5 * 60 * 1000);
+function showTimer() {
+  // Update start time
+  startTime = Date.now();
+
+  // Count and show elapsed time
+  clearInterval(intervalID);
+  intervalID = setInterval(updateElapsedTime, 1000);
 }
 
-// Twenty minute break
+function updateElapsedTime() {
+  // Get the current time (to subtract from)
+  const currentTime = Date.now();
+
+  // Calculate the elapsed time (milliseconds)
+  const elapsedTime = currentTime - startTime;
+
+  // Convert to minutes and seconds
+  const elapsedMinutes = Math.floor(elapsedTime / (1000 * 60));
+  const elapsedSeconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+
+  // Show time
+  timerDisplay.classList.remove("hidden");
+
+  // Display the elapsed time
+  displayTime.innerHTML = `Elapsed time: ${elapsedMinutes} minutes ${elapsedSeconds} seconds`;
+}
+
+// Five minute break, run 25 after
+function doFiveBreak() {
+  showTimer();
+  timeoutID = setTimeout(runPomodoro, 5 * 60 * 1000);
+}
+
+// Twenty minute break, run 25 after
 function doTwentyBreak() {
-  setTimeout(runPomodoro, 20 * 60 * 1000);
+  showTimer();
+  timeoutID = setTimeout(runPomodoro, 20 * 60 * 1000);
 }
 
 // TESTING PURPOSES ONLY (shortened version):
 
+// document.querySelector(".study-timer").addEventListener("click", runPomodoro);
+// let startTime;
+// let intervalID;
+// // 25 minutes of work
 // function runPomodoro() {
+//   //update current round
 //   timerRound++;
 //   console.log(timerRound);
+
+//   // show current status of timer
+//   const timerDisplay = document.querySelector(".update-timer");
+//   timerDisplay.classList.remove("hidden");
+
 //   if (timerRound == 4) {
-//     timerRound = 0; // set back to intervals of work time
-//     console.log("Working for 5 seconds");
-//     setTimeout(doTwentyBreak, 5000); // after 25 mins of work, get a 20 minute break
+//     timerRound = 0; // set back to 0 intervals of work time
+//     // Record the time when the timer is set
+//     // startTime = Date.now();
+//     showTimer();
+//     setTimeout(doTwentyBreak, 10000); // after 10 secs of work, get a 9 sec break
+//     // showTimer(25 * 60 * 1000);
 //   } else {
-//     console.log("Working for 5 seconds");
-//     setTimeout(doFiveBreak, 5000); // after 25 mins of work, get a 5 minute break
+//     // startTime = Date.now();
+//     showTimer();
+//     setTimeout(doFiveBreak, 10000); // after 10 secs of work, get a 5 sec break
 //   }
+// }
+
+// function showTimer() {
+//   startTime = Date.now();
+//   console.log("Got to showTimer");
+//   clearInterval(intervalID);
+//   intervalID = setInterval(updateElapsedTime, 1000);
+// }
+
+// // Function to update the elapsed time
+// function updateElapsedTime() {
+//   // Get the current time
+//   const currentTime = Date.now();
+
+//   // Calculate the elapsed time in milliseconds
+//   const elapsedTime = currentTime - startTime;
+
+//   // Convert the elapsed time to minutes and seconds
+//   const elapsedMinutes = Math.floor(elapsedTime / (1000 * 60));
+//   const elapsedSeconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+
+//   const displayTime = document.querySelector(".current");
+//   // Display the elapsed time
+//   displayTime.innerHTML = `Elapsed time: ${elapsedMinutes} minutes ${elapsedSeconds} seconds`;
 // }
 
 // // Five minute break
 // function doFiveBreak() {
-//   console.log("Running 10 second break");
-//   setTimeout(runPomodoro, 10000);
+//   showTimer();
+//   setTimeout(runPomodoro, 5000);
+//   // showTimer(5 * 60 * 1000);
 // }
 
 // // Twenty minute break
 // function doTwentyBreak() {
-//   console.log("Running 7 second break");
-//   setTimeout(runPomodoro, 7000);
+//   // startTime = Date.now();
+//   showTimer();
+//   setTimeout(runPomodoro, 9000);
+//   // showTimer(20 * 60 * 1000);
 // }
-
-/*
-1.) Tasks to be able to be removed (Dani)
-
------------------------------------------
-- Get event handler registering the drop (may have to preventDefault before)
-2.) Dynamic resizing of the main panel and adding tasks (Michael)
-3.) Calculating the Statistics and displaying them (Dani) 
-4.) Reshuffling the tasks 
-5.) call to OpenAI API 
-6.) Display GPT text 
-(main goals)
-*/
