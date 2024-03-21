@@ -1,114 +1,155 @@
 "use strict";
 
-let countdown = 0;
-let difficulty = [0, 0]; // represents difficulty, # of elements
-let tasks = 0;
-let timerRound = 0;
+class TaskManager {
+  constructor() {
+    // DOM elements
+    this.addBtn = document.querySelector(".add");
+    this.totalDifficulty = document.getElementById("stat-difficulty");
+    this.congratsMsg = document.querySelector(".congrats");
+    this.addTask = this.addTask.bind(this);
+    this.addBtn.addEventListener("click", this.addTask);
 
-document.querySelector(".add").addEventListener("click", function () {
-  event.preventDefault();
-  if (tasks >= 12) {
-    alert("You are at the maximum number of tasks");
-  } else {
-    let dur = document.getElementById("duration").value;
-    let diff = document.getElementById("difficulty").value;
-    let newTaskName = document.getElementById("tname").value;
+    // Properties
+    this.totalTasks = 0;
+    this.difficulty = 0;
+    this.timeLeft = 0;
+  }
 
-    const newTaskDuration = Number(dur);
-    const newTaskDifficulty = Number(diff);
-
-    if (newTaskName == "" || dur == "" || diff == "") {
-      alert("Please fill in all fields.");
-    } else if (newTaskName.length > 25) {
-      console.log(newTaskName.length);
-      alert("Task name must be under 25 characters");
-    } else if (newTaskDifficulty == 0 || newTaskDuration == 0) {
-      alert("difficulty and duration cannot be 0");
-    } else if (!(Number.isInteger(newTaskDuration) && newTaskDuration > 0)) {
-      console.log(newTaskDuration);
-      alert("The duration should be a positive integer");
-    } else if (
-      !(
-        Number.isInteger(newTaskDifficulty) &&
-        newTaskDifficulty > 0 &&
-        newTaskDifficulty <= 10
-      )
-    ) {
-      alert(
-        "Difficulty should be a a positive integer less than or equal to 10"
-      );
+  addTask() {
+    event.preventDefault();
+    if (this.totalTasks >= 12) {
+      alert("You are at the maximum number of tasks");
     } else {
-      let div = document.createElement("div");
-      div.setAttribute("class", "box");
-      div.setAttribute("draggable", "true");
-      div.setAttribute("ondragstart", "drag(event)");
+      let dur = document.getElementById("duration").value;
+      let diff = document.getElementById("difficulty").value;
 
-      // Set ID
-      const idName = newTaskName.replace(/\s+/g, "");
-      div.setAttribute("id", `${idName}`);
-      // Create task
-      div.innerHTML = `${newTaskName} <h5 id="${idName}-time" data-duration="${newTaskDuration}" data-difficulty="${newTaskDifficulty}" >[${newTaskDuration} minutes]</h5>`;
-      console.log(`${idName}-time`);
+      let newTaskName = document.getElementById("tname").value;
+      const newTaskDuration = Number(dur);
+      const newTaskDifficulty = Number(diff);
 
-      const leftChildren = document.querySelector(".column1").children.length;
-      if (leftChildren < 6) {
-        document.querySelector(".column1").appendChild(div);
-        console.log(`Tasks on left: ${leftChildren}`);
+      if (newTaskName == "" || dur == "" || diff == "") {
+        alert("Please fill in all fields.");
+      } else if (newTaskName.length > 25) {
+        console.log(newTaskName.length);
+        alert("Task name must be under 25 characters");
+      } else if (newTaskDifficulty == 0 || newTaskDuration == 0) {
+        alert("difficulty and duration cannot be 0");
+      } else if (!(Number.isInteger(newTaskDuration) && newTaskDuration > 0)) {
+        console.log(newTaskDuration);
+        alert("The duration should be a positive integer");
+      } else if (
+        !(
+          Number.isInteger(newTaskDifficulty) &&
+          newTaskDifficulty > 0 &&
+          newTaskDifficulty <= 10
+        )
+      ) {
+        alert(
+          "Difficulty should be a a positive integer less than or equal to 10"
+        );
       } else {
-        document.querySelector(".column2").appendChild(div);
+        let div = document.createElement("div");
+        div.setAttribute("class", "box");
+        div.setAttribute("draggable", "true");
+        div.setAttribute("ondragstart", "drag(event)");
+
+        // Set ID
+        const idName = newTaskName.replace(/\s+/g, "");
+        div.setAttribute("id", `${idName}`);
+        // Create task
+        div.innerHTML = `${newTaskName} <h5 id="${idName}-time" data-duration="${newTaskDuration}" data-difficulty="${newTaskDifficulty}" >[${newTaskDuration} minutes]</h5>`;
+        console.log(`${idName}-time`);
+
+        const leftChildren = document.querySelector(".column1").children.length;
+        if (leftChildren < 6) {
+          document.querySelector(".column1").appendChild(div);
+          console.log(`Tasks on left: ${leftChildren}`);
+        } else {
+          document.querySelector(".column2").appendChild(div);
+        }
+
+        this.updateDuration(newTaskDuration, true);
+
+        this.updateDifficulty(newTaskDifficulty, true);
+
+        document.getElementById("duration").value = "";
+        document.getElementById("difficulty").value = "";
+        document.getElementById("tname").value = "";
       }
-
-      updateDuration(newTaskDuration, true);
-
-      updateDifficulty(newTaskDifficulty, true);
-
-      tasks++;
-
-      document.getElementById("duration").value = "";
-      document.getElementById("difficulty").value = "";
-      document.getElementById("tname").value = "";
     }
   }
-});
 
-function updateDuration(duration, state) {
-  if (state) {
-    countdown += duration;
-  } else {
-    countdown -= duration;
-    if (countdown == 0) {
-      alert("Congratulations! All tasks are finished, productivity god!");
-    }
-  }
-  let header = document.getElementById("countdown");
-  header.innerHTML = countdown;
-}
-
-function updateDifficulty(level, state) {
-  if (state) {
-    difficulty[0] += level;
-    difficulty[1]++;
-  } else {
-    difficulty[0] -= level;
-    difficulty[1] -= 1;
-  }
-  const status = document.getElementById("stat-difficulty");
-  if (difficulty[1] == 0) {
-    // case: denominator = 0
-    status.innerHTML = "Easy";
-  } else {
-    const avgDifficulty = difficulty[0] / difficulty[1];
-
-    if (avgDifficulty < 4) {
-      status.innerHTML = "Easy";
-    } else if (avgDifficulty <= 7) {
-      status.innerHTML = "Medium";
+  updateDuration(duration, state) {
+    if (state) {
+      this.congratsMsg.classList.add("hidden");
+      this.timeLeft += duration;
     } else {
-      status.innerHTML = "Difficult";
+      this.timeLeft -= duration;
+      if (this.timeLeft == 0) {
+        this.congratsMsg.classList.remove("hidden");
+      }
+    }
+    let header = document.getElementById("countdown");
+    header.innerHTML = this.timeLeft;
+  }
+
+  updateDifficulty(level, state) {
+    console.log(document);
+    if (state) {
+      this.difficulty += level;
+      this.totalTasks++;
+    } else {
+      this.difficulty -= level;
+      this.totalTasks -= 1;
+    }
+
+    if (this.totalTasks == 0) {
+      // Case: denominator = 0
+      this.totalDifficulty.innerHTML = "No tasks";
+    } else {
+      const avgDifficulty = this.difficulty / this.totalTasks;
+
+      if (avgDifficulty < 4) {
+        this.totalDifficulty.innerHTML = "Easy";
+      } else if (avgDifficulty <= 7) {
+        this.totalDifficulty.innerHTML = "Medium";
+      } else {
+        this.totalDifficulty.innerHTML = "Difficult";
+      }
     }
   }
 }
 
+class Quote {
+  constructor() {
+    document
+      .querySelector(".quote")
+      .addEventListener("click", this.getQuote.bind(this));
+    this.displayQuote = document.querySelector(".user-quote");
+  }
+
+  async getQuote() {
+    try {
+      this.displayQuote.innerHTML = "";
+      this.displayQuote.classList.add("spinning");
+      // Get the element where you want to show the loading animation
+      // const loadingText = document.querySelector(".user-quote");
+      // Set the inner text of the element to the spinning animation
+
+      const response = await fetch("https://api.adviceslip.com/advice");
+      var data = await response.json();
+
+      this.displayQuote.innerHTML = data.slip.advice;
+
+      this.displayQuote.classList.remove("spinning");
+      this.displayQuote.classList.remove("hidden");
+    } catch (err) {
+      alert(err);
+    }
+  }
+}
+
+// Global functions
 function allowDrop(event) {
   event.preventDefault();
 }
@@ -116,13 +157,8 @@ function allowDrop(event) {
 function drag(event) {
   // Set the data that is being transferred during the drag
   event.dataTransfer.setData("text/plain", event.target.id);
-  // Construct the text content including the child elements
-  const textContent = Array.from(event.target.childNodes)
-    .map((child) => child.textContent || child.innerText)
-    .join("");
-
-  // Set the text content data
-  event.dataTransfer.setData("text/plain-content", textContent);
+  // Set the text of the dragged element
+  event.dataTransfer.setData("text/plain-content", event.target.textContent);
 }
 
 function drop(event) {
@@ -136,42 +172,20 @@ function drop(event) {
     // Update time
     let element = document.getElementById(`${draggedId}-time`);
     const duration = Number(element.getAttribute("data-duration"));
-    updateDuration(duration);
+    taskManager.updateDuration(duration);
 
     // Update difficulty
-    updateDifficulty(Number(element.getAttribute("data-difficulty")), false);
+    taskManager.updateDifficulty(
+      Number(element.getAttribute("data-difficulty")),
+      false
+    );
 
     // Remove the dragged element from the DOM
     const textContent = event.dataTransfer.getData("text/plain-content");
     draggedElement.parentNode.removeChild(draggedElement);
-    tasks--;
 
     // Print out the task that was completed and removed
     console.log(`The following task was completed: ${textContent}`);
-  }
-}
-
-// Fetch Quote
-document.querySelector(".quote").addEventListener("click", getQuote);
-
-async function getQuote() {
-  try {
-    const displayQuote = document.querySelector(".user-quote");
-    displayQuote.innerHTML = "";
-    displayQuote.classList.add("spinning");
-    // Get the element where you want to show the loading animation
-    // const loadingText = document.querySelector(".user-quote");
-    // Set the inner text of the element to the spinning animation
-
-    const response = await fetch("https://api.adviceslip.com/advice");
-    var data = await response.json();
-
-    displayQuote.innerHTML = data.slip.advice;
-
-    displayQuote.classList.remove("spinning");
-    displayQuote.classList.remove("hidden");
-  } catch (err) {
-    alert(err);
   }
 }
 
@@ -191,7 +205,7 @@ const link = document.querySelector(".pomodoro-link");
 
 let startTime;
 let intervalID; // to stop it later
-let timeoutID;
+let timeoutID; // to stop the tiemout
 
 function stopPomodoro() {
   clearInterval(intervalID);
@@ -325,3 +339,6 @@ function doTwentyBreak() {
 //   setTimeout(runPomodoro, 9000);
 //   // showTimer(20 * 60 * 1000);
 // }
+
+const taskManager = new TaskManager();
+const quote = new Quote();
