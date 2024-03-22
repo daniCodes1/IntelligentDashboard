@@ -20,34 +20,45 @@ class TaskManager {
     if (this.totalTasks >= 12) {
       alert("You are at the maximum number of tasks");
     } else {
-      let dur = document.getElementById("duration").value;
-      let diff = document.getElementById("difficulty").value;
-
       let newTaskName = document.getElementById("tname").value;
-      const newTaskDuration = Number(dur);
-      const newTaskDifficulty = Number(diff);
+      let newTaskDuration = Number(document.getElementById("duration").value);
+      let newTaskDifficulty = Number(
+        document.getElementById("difficulty").value
+      );
 
-      if (newTaskName == "" || dur == "" || diff == "") {
-        alert("Please fill in all fields.");
-      } else if (newTaskName.length > 25) {
-        console.log(newTaskName.length);
-        alert("Task name must be under 25 characters");
-      } else if (newTaskDifficulty == 0 || newTaskDuration == 0) {
-        alert("difficulty and duration cannot be 0");
-      } else if (!(Number.isInteger(newTaskDuration) && newTaskDuration > 0)) {
-        console.log(newTaskDuration);
-        alert("The duration should be a positive integer");
-      } else if (
-        !(
-          Number.isInteger(newTaskDifficulty) &&
-          newTaskDifficulty > 0 &&
-          newTaskDifficulty <= 10
+      // const newTaskDuration = Number(durInput);
+      // const newTaskDifficulty = Number(diffInput);
+
+      if (
+        this.authenticateTaskFields(
+          newTaskName,
+          newTaskDuration,
+          newTaskDifficulty
         )
       ) {
-        alert(
-          "Difficulty should be a a positive integer less than or equal to 10"
-        );
-      } else {
+        // )
+        //   if (newTaskName == "") {
+        //     alert("Please fill in task name.");
+        //   } else if (newTaskName.length > 25) {
+        //     console.log(newTaskName.length);
+        //     alert("Task name must be under 25 characters");
+        //   } else if (newTaskDifficulty == 0 || newTaskDuration == 0) {
+        //     alert("difficulty and duration cannot be 0");
+        //   } else if (
+        //     !(Number.isInteger(newTaskDuration) && newTaskDuration > 0)
+        //   ) {
+        //     console.log(newTaskDuration);
+        //     alert("The duration should be a positive integer");
+        //   } else if (
+        //     !(
+        //       Number.isInteger(newTaskDifficulty) &&
+        //       newTaskDifficulty > 0 &&
+        //       newTaskDifficulty <= 10
+        //     )
+        //   ) {
+        //     alert(
+        //       "Difficulty should be a a positive integer less than or equal to 10"
+        //     );
         let div = document.createElement("div");
         div.setAttribute("class", "box");
         div.setAttribute("draggable", "true");
@@ -77,6 +88,33 @@ class TaskManager {
         document.getElementById("tname").value = "";
       }
     }
+  }
+
+  authenticateTaskFields(newTaskName, newTaskDuration, newTaskDifficulty) {
+    if (newTaskName == "") {
+      alert("Please fill in task name.");
+    } else if (newTaskName.length > 25) {
+      console.log(newTaskName.length);
+      alert("Task name must be under 25 characters");
+    } else if (newTaskDifficulty == 0 || newTaskDuration == 0) {
+      alert("difficulty and duration cannot be 0");
+    } else if (!(Number.isInteger(newTaskDuration) && newTaskDuration > 0)) {
+      console.log(newTaskDuration);
+      alert("The duration should be a positive integer");
+    } else if (
+      !(
+        Number.isInteger(newTaskDifficulty) &&
+        newTaskDifficulty > 0 &&
+        newTaskDifficulty <= 10
+      )
+    ) {
+      alert(
+        "Difficulty should be a a positive integer less than or equal to 10"
+      );
+    } else {
+      return true;
+    }
+    return false;
   }
 
   updateDuration(duration, state) {
