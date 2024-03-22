@@ -6,8 +6,8 @@ class TaskManager {
     this.addBtn = document.querySelector(".add");
     this.totalDifficulty = document.getElementById("stat-difficulty");
     this.congratsMsg = document.querySelector(".congrats");
-    this.addTask = this.addTask.bind(this);
-    this.addBtn.addEventListener("click", this.addTask);
+    this.handleTask = this.handleTask.bind(this);
+    this.addBtn.addEventListener("click", this.handleTask);
 
     // Properties
     this.totalTasks = 0;
@@ -15,7 +15,7 @@ class TaskManager {
     this.timeLeft = 0;
   }
 
-  addTask() {
+  handleTask() {
     event.preventDefault();
     if (this.totalTasks >= 12) {
       alert("You are at the maximum number of tasks");
@@ -26,9 +26,6 @@ class TaskManager {
         document.getElementById("difficulty").value
       );
 
-      // const newTaskDuration = Number(durInput);
-      // const newTaskDifficulty = Number(diffInput);
-
       if (
         this.authenticateTaskFields(
           newTaskName,
@@ -36,34 +33,39 @@ class TaskManager {
           newTaskDifficulty
         )
       ) {
-        let div = document.createElement("div");
-        div.setAttribute("class", "box");
-        div.setAttribute("draggable", "true");
-        div.setAttribute("ondragstart", "drag(event)");
+        // Create and append task
+        this.addTask(newTaskName, newTaskDuration, newTaskDifficulty);
 
-        // Set ID
-        const idName = newTaskName.replace(/\s+/g, "");
-        div.setAttribute("id", `${idName}`);
-
-        // Create task
-        div.innerHTML = `${newTaskName} <h5 data-duration="${newTaskDuration}" data-difficulty="${newTaskDifficulty}" >[${newTaskDuration} minutes]</h5>`;
-
-        const leftChildren = document.querySelector(".column1").children.length;
-        if (leftChildren < 6) {
-          document.querySelector(".column1").appendChild(div);
-          console.log(`Tasks on left: ${leftChildren}`);
-        } else {
-          document.querySelector(".column2").appendChild(div);
-        }
-
+        // Manage states
         this.updateDuration(newTaskDuration, true);
-
         this.updateDifficulty(newTaskDifficulty, true);
 
+        // Set back to empty inputs
         document.getElementById("duration").value = "";
         document.getElementById("difficulty").value = "";
         document.getElementById("tname").value = "";
       }
+    }
+  }
+
+  addTask(newTaskName, newTaskDuration, newTaskDifficulty) {
+    let div = document.createElement("div");
+    div.setAttribute("class", "box");
+    div.setAttribute("draggable", "true");
+    div.setAttribute("ondragstart", "drag(event)");
+
+    // Set ID
+    const idName = newTaskName.replace(/\s+/g, "");
+    div.setAttribute("id", `${idName}`);
+
+    // Set task
+    div.innerHTML = `${newTaskName} <h5 data-duration="${newTaskDuration}" data-difficulty="${newTaskDifficulty}" >[${newTaskDuration} minutes]</h5>`;
+    const leftChildren = document.querySelector(".column1").children.length;
+    if (leftChildren < 6) {
+      document.querySelector(".column1").appendChild(div);
+      console.log(`Tasks on left: ${leftChildren}`);
+    } else {
+      document.querySelector(".column2").appendChild(div);
     }
   }
 
@@ -284,9 +286,8 @@ function drop(event) {
   // Check if the dragged element exists
   if (draggedElement) {
     // Update time
-    let element = document.getElementById(draggedId);
-    const duration = Number(element.getAttribute("data-duration"));
-    taskManager.updateDuration(duration);
+    const duration = Number(draggedElement.getAttribute("data-duration"));
+    taskManager.updateDuration(duration, false);
 
     // Update difficulty
     taskManager.updateDifficulty(
