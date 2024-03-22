@@ -36,29 +36,6 @@ class TaskManager {
           newTaskDifficulty
         )
       ) {
-        // )
-        //   if (newTaskName == "") {
-        //     alert("Please fill in task name.");
-        //   } else if (newTaskName.length > 25) {
-        //     console.log(newTaskName.length);
-        //     alert("Task name must be under 25 characters");
-        //   } else if (newTaskDifficulty == 0 || newTaskDuration == 0) {
-        //     alert("difficulty and duration cannot be 0");
-        //   } else if (
-        //     !(Number.isInteger(newTaskDuration) && newTaskDuration > 0)
-        //   ) {
-        //     console.log(newTaskDuration);
-        //     alert("The duration should be a positive integer");
-        //   } else if (
-        //     !(
-        //       Number.isInteger(newTaskDifficulty) &&
-        //       newTaskDifficulty > 0 &&
-        //       newTaskDifficulty <= 10
-        //     )
-        //   ) {
-        //     alert(
-        //       "Difficulty should be a a positive integer less than or equal to 10"
-        //     );
         let div = document.createElement("div");
         div.setAttribute("class", "box");
         div.setAttribute("draggable", "true");
@@ -67,9 +44,9 @@ class TaskManager {
         // Set ID
         const idName = newTaskName.replace(/\s+/g, "");
         div.setAttribute("id", `${idName}`);
+
         // Create task
-        div.innerHTML = `${newTaskName} <h5 id="${idName}-time" data-duration="${newTaskDuration}" data-difficulty="${newTaskDifficulty}" >[${newTaskDuration} minutes]</h5>`;
-        console.log(`${idName}-time`);
+        div.innerHTML = `${newTaskName} <h5 data-duration="${newTaskDuration}" data-difficulty="${newTaskDifficulty}" >[${newTaskDuration} minutes]</h5>`;
 
         const leftChildren = document.querySelector(".column1").children.length;
         if (leftChildren < 6) {
@@ -307,7 +284,7 @@ function drop(event) {
   // Check if the dragged element exists
   if (draggedElement) {
     // Update time
-    let element = document.getElementById(`${draggedId}-time`);
+    let element = document.getElementById(draggedId);
     const duration = Number(element.getAttribute("data-duration"));
     taskManager.updateDuration(duration);
 
