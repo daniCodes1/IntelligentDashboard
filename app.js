@@ -53,13 +53,15 @@ class TaskManager {
     div.setAttribute("class", "box");
     div.setAttribute("draggable", "true");
     div.setAttribute("ondragstart", "drag(event)");
+    div.dataset.duration = newTaskDuration;
+    div.dataset.difficulty = newTaskDifficulty;
 
     // Set ID
     const idName = newTaskName.replace(/\s+/g, "");
     div.setAttribute("id", `${idName}`);
 
     // Set task
-    div.innerHTML = `${newTaskName} <h5 data-duration="${newTaskDuration}" data-difficulty="${newTaskDifficulty}" >[${newTaskDuration} minutes]</h5>`;
+    div.innerHTML = `${newTaskName} <h5>[${newTaskDuration} minutes]</h5>`;
     const leftChildren = document.querySelector(".column1").children.length;
     if (leftChildren < 6) {
       document.querySelector(".column1").appendChild(div);
@@ -97,6 +99,7 @@ class TaskManager {
   }
 
   updateDuration(duration, state) {
+    console.log(duration);
     if (state) {
       this.congratsMsg.classList.add("hidden");
       this.timeLeft += duration;
@@ -273,25 +276,29 @@ function allowDrop(event) {
 function drag(event) {
   // Set the data that is being transferred during the drag
   event.dataTransfer.setData("text/plain", event.target.id);
+  console.log(event.target.id);
   // Set the text of the dragged element
   event.dataTransfer.setData("text/plain-content", event.target.textContent);
 }
 
 function drop(event) {
   event.preventDefault();
-  var draggedId = event.dataTransfer.getData("text/plain");
+  let draggedId = event.dataTransfer.getData("text/plain");
+
   // Get a reference to the dragged element
-  var draggedElement = document.getElementById(draggedId);
+  let draggedElement = document.getElementById(draggedId);
 
   // Check if the dragged element exists
   if (draggedElement) {
     // Update time
-    const duration = Number(draggedElement.getAttribute("data-duration"));
-    taskManager.updateDuration(duration, false);
+    taskManager.updateDuration(
+      parseInt(draggedElement.dataset.duration),
+      false
+    );
 
     // Update difficulty
     taskManager.updateDifficulty(
-      Number(element.getAttribute("data-difficulty")),
+      parseInt(draggedElement.dataset.difficulty),
       false
     );
 
