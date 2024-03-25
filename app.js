@@ -185,33 +185,31 @@ class Pomodoro {
       .addEventListener("click", this.stopPomodoro.bind(this));
     this.timerDisplay = document.querySelector(".update-timer");
     this.infoLink = document.querySelector(".pomodoro-link");
+    this.currentInterval = document.getElementById("interval-name");
     // only the counting
     this.countdown = document.querySelector(".current");
     this.startTime = 0;
     this.rounds = 0;
-    this.intervalID = 0;
-    this.timeoutID = 0;
+    this.intervalID = "";
+    this.timeoutID = "";
   }
 
   runPomodoro() {
     console.log("starting");
     this.rounds++;
-
-    console.log(this.infoLink);
     this.infoLink.classList.remove("pomodoro-link");
     this.infoLink.classList.add("hidden");
+    this.currentInterval.innerHTML = "Current interval: 25 minutes of work";
 
     console.log("Reached 25");
     // Set appropriate timer + callback
     if (this.rounds == 4) {
       this.rounds = 0; // set back to 0 intervals of work time
-      this.showTimer();
+      this.showTimer(25);
 
-      // setTimeout doesn't have an object context, so this is window
-      // change to bind(this)
       this.timeoutID = setTimeout(this.doTwentyBreak.bind(this), 25 * 60000); // after 25 mins of work, get a 20 minute break
     } else {
-      this.showTimer();
+      this.showTimer(25);
       this.timeoutID = setTimeout(this.doFiveBreak.bind(this), 25 * 60000); // after 25 mins of work, get a 5 minute break
     }
   }
@@ -219,42 +217,46 @@ class Pomodoro {
   // Five minute break, run 25 after
   doFiveBreak() {
     console.log("Reached 5");
-    this.showTimer();
+    this.currentInterval.innerHTML = "Current interval: 5 minute break";
+    this.showTimer(5);
     this.timeoutID = setTimeout(this.runPomodoro.bind(this), 5 * 60000);
   }
 
   // Twenty minute break, run 25 after
   doTwentyBreak() {
     console.log("Reached 20");
-    this.showTimer();
+    this.currentInterval.innerHTML = "Current interval: 20 minute break";
+    this.showTimer(20);
     this.timeoutID = setTimeout(this.runPomodoro.bind(this), 20 * 60000);
   }
 
-  showTimer() {
+  showTimer(num) {
     // Update start time
     this.startTime = Date.now();
 
     // Count and show elapsed time
     clearInterval(this.intervalID);
-    this.intervalID = setInterval(this.updateElapsedTime.bind(this), 1000);
+    this.intervalID = setInterval(this.updateElapsedTime.bind(this, num), 1000);
   }
 
-  updateElapsedTime() {
+  updateElapsedTime(num) {
     // Get the current time (to subtract from)
     const currentTime = Date.now();
 
     // Calculate the elapsed time (milliseconds)
     const elapsedTime = currentTime - this.startTime;
+    console.log(elapsedTime);
+    const remainingTime = num * 60000 - elapsedTime;
 
     // Convert to minutes and seconds
-    const elapsedMinutes = Math.floor(elapsedTime / (1000 * 60));
-    const elapsedSeconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
+    const remainingMinutes = Math.floor(remainingTime / (1000 * 60));
+    const remainingSeconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
 
     // Show time
     this.timerDisplay.classList.remove("hidden");
 
     // Display the elapsed time
-    this.countdown.innerHTML = `Elapsed time: ${elapsedMinutes} minutes ${elapsedSeconds} seconds`;
+    this.countdown.innerHTML = `Time left: ${remainingMinutes} minutes ${remainingSeconds} seconds`;
   }
 
   stopPomodoro() {
