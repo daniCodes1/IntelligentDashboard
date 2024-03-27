@@ -218,9 +218,6 @@ class Pomodoro {
     this.infoLink.classList.remove("pomodoro-link");
     this.infoLink.classList.add("hidden");
     this.currentInterval.innerHTML = "Current interval: 25 minutes of work";
-    this.progressContainer.classList.remove("hidden");
-    // Show the time
-    this.timerDisplay.classList.remove("hidden");
 
     console.log("Reached 25");
     // Set appropriate timer + callback
@@ -272,6 +269,9 @@ class Pomodoro {
     const remainingMinutes = Math.floor(remainingTime / (1000 * 60));
     const remainingSeconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
 
+    // Display the elapsed time
+    this.countdown.innerHTML = `Time left: ${remainingMinutes} minutes ${remainingSeconds} seconds`;
+
     // Calculate progress percentage
     const progress = ((num * 60000 - remainingTime) / (num * 60000)) * 100;
 
@@ -282,9 +282,9 @@ class Pomodoro {
     } else {
       this.progressBar.innerHTML = `${Math.ceil(progress)}%`;
     }
-
-    // Display the elapsed time
-    this.countdown.innerHTML = `Time left: ${remainingMinutes} minutes ${remainingSeconds} seconds`;
+    this.progressContainer.classList.remove("hidden");
+    // Show the time
+    this.timerDisplay.classList.remove("hidden");
   }
 
   stopPomodoro() {
