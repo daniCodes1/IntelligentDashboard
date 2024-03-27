@@ -220,6 +220,26 @@ h5 {
   margin: 0 auto;
 }
 
+.progress-container {
+  margin: 10px auto;
+  width: 80%;
+  background-color: #f1f1f1;
+  border-radius: 7px;
+  border: 3px solid #ccc;
+  overflow: hidden;
+}
+
+.progress-bar {
+  width: 0%;
+  height: 30px;
+  background-color: #62dee5;
+  text-align: center;
+  line-height: 30px;
+  color: black;
+  border-radius: 5px;
+
+}
+
 .update-timer h4 {
   margin-bottom: 2px;
 }
