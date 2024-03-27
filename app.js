@@ -17,6 +17,8 @@ class TaskManager {
 
   handleTask() {
     event.preventDefault();
+
+    // Alert user if the total tasks exceed screen capacity
     if (this.totalTasks >= 12) {
       alert("You are at the maximum number of tasks");
     } else {
@@ -26,6 +28,7 @@ class TaskManager {
         document.getElementById("difficulty").value
       );
 
+      // Validate input fields for a new task
       if (
         this.authenticateTaskFields(
           newTaskName,
@@ -33,7 +36,7 @@ class TaskManager {
           newTaskDifficulty
         )
       ) {
-        // Create and append task
+        // Proceed with task creation
         this.addTask(newTaskName, newTaskDuration, newTaskDifficulty);
 
         // Manage states
@@ -49,6 +52,7 @@ class TaskManager {
   }
 
   addTask(newTaskName, newTaskDuration, newTaskDifficulty) {
+    // Set task attributes
     let div = document.createElement("div");
     div.setAttribute("class", "box");
     div.setAttribute("draggable", "true");
@@ -60,7 +64,7 @@ class TaskManager {
     const idName = newTaskName.replace(/\s+/g, "");
     div.setAttribute("id", `${idName}`);
 
-    // Set task
+    // Add task element to the task list, alternating between two columns if one column is full
     div.innerHTML = `${newTaskName} <h5>[${newTaskDuration} minutes]</h5>`;
     const leftChildren = document.querySelector(".column1").children.length;
     if (leftChildren < 6) {
@@ -98,6 +102,8 @@ class TaskManager {
     return false;
   }
 
+  // If state is true, add the task duration to the total time left; otherwise, subtract the task duration
+  // If the total time left becomes 0, show the congratulations message for finishing all tasks
   updateDuration(duration, state) {
     console.log(duration);
     if (state) {
@@ -109,10 +115,13 @@ class TaskManager {
         this.congratsMsg.classList.remove("hidden");
       }
     }
+
+    // Update the user display
     let header = document.getElementById("countdown");
     header.innerHTML = this.timeLeft;
   }
 
+  // Update total difficulty and number of tasks based on the specified difficulty level and state
   updateDifficulty(level, state) {
     console.log(document);
     if (state) {
@@ -123,12 +132,13 @@ class TaskManager {
       this.totalTasks -= 1;
     }
 
+    // Cannot divide by 0 (denominator is 0)
     if (this.totalTasks == 0) {
-      // Case: denominator = 0
       this.totalDifficulty.innerHTML = "No tasks";
     } else {
       const avgDifficulty = this.difficulty / this.totalTasks;
 
+      // Update user display
       if (avgDifficulty < 4) {
         this.totalDifficulty.innerHTML = "Easy";
       } else if (avgDifficulty <= 7) {
@@ -142,28 +152,34 @@ class TaskManager {
 
 class Quote {
   constructor() {
+    // DOM element assignments
     document
       .querySelector(".quote")
       .addEventListener("click", this.getQuote.bind(this));
     this.displayQuote = document.querySelector(".user-quote");
   }
 
+  // Asynchronously fetch a quote from the API
   async getQuote() {
     try {
+      // Clear any existing quote
       this.displayQuote.innerHTML = "";
-      this.displayQuote.classList.add("spinning");
-      // Get the element where you want to show the loading animation
-      // const loadingText = document.querySelector(".user-quote");
-      // Set the inner text of the element to the spinning animation
 
+      // Add a spinning animation while waiting for response
+      this.displayQuote.classList.add("spinning");
+
+      // Fetch quote from API
       const response = await fetch("https://api.adviceslip.com/advice");
       var data = await response.json();
 
+      // Update the quote
       this.displayQuote.innerHTML = data.slip.advice;
 
+      // Remove spinning animation and show the quote on UI
       this.displayQuote.classList.remove("spinning");
       this.displayQuote.classList.remove("hidden");
     } catch (err) {
+      // Alert user with any error from fetch
       alert(err);
     }
   }
@@ -172,7 +188,7 @@ class Quote {
 // Timer functionality
 /* Pomodoro technique:
 25 minutes of work broken into 5 minute breaks
-every 4 consecutive interals u get a 20 minute break
+Every 4 consecutive interals u get a 20 minute break
 */
 
 class Pomodoro {
@@ -188,6 +204,8 @@ class Pomodoro {
     this.currentInterval = document.getElementById("interval-name");
     // only the counting
     this.countdown = document.querySelector(".current");
+    this.progressBar = document.querySelector(".progress-bar");
+    this.progressContainer = document.querySelector(".progress-container");
     this.startTime = 0;
     this.rounds = 0;
     this.intervalID = "";
@@ -200,6 +218,9 @@ class Pomodoro {
     this.infoLink.classList.remove("pomodoro-link");
     this.infoLink.classList.add("hidden");
     this.currentInterval.innerHTML = "Current interval: 25 minutes of work";
+    this.progressContainer.classList.remove("hidden");
+    // Show the time
+    this.timerDisplay.classList.remove("hidden");
 
     console.log("Reached 25");
     // Set appropriate timer + callback
@@ -245,15 +266,22 @@ class Pomodoro {
 
     // Calculate the elapsed time (milliseconds)
     const elapsedTime = currentTime - this.startTime;
-    console.log(elapsedTime);
     const remainingTime = num * 60000 - elapsedTime;
 
     // Convert to minutes and seconds
     const remainingMinutes = Math.floor(remainingTime / (1000 * 60));
     const remainingSeconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
 
-    // Show time
-    this.timerDisplay.classList.remove("hidden");
+    // Calculate progress percentage
+    const progress = ((num * 60000 - remainingTime) / (num * 60000)) * 100;
+
+    // Update progress bar
+    this.progressBar.style.width = `${progress}%`;
+    if (Math.ceil(progress) > 100) {
+      this.progressBar.innerHTML;
+    } else {
+      this.progressBar.innerHTML = `${Math.ceil(progress)}%`;
+    }
 
     // Display the elapsed time
     this.countdown.innerHTML = `Time left: ${remainingMinutes} minutes ${remainingSeconds} seconds`;
@@ -267,6 +295,8 @@ class Pomodoro {
     this.timerDisplay.classList.add("hidden");
     this.infoLink.classList.remove("hidden");
     this.infoLink.classList.add("pomodoro-link");
+    this.progressBar.style.width = "0%";
+    this.progressContainer.classList.add("hidden");
   }
 }
 
