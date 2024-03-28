@@ -135,6 +135,7 @@ class TaskManager {
     div.setAttribute("class", "box");
     div.setAttribute("draggable", "true");
     div.setAttribute("ondragstart", "drag(event)");
+    div.setAttribute("ondragover", "allowDrop(event)");
     div.dataset.duration = newTaskDuration;
     div.dataset.difficulty = newTaskDifficulty;
     div.dataset.name = newTaskName;
@@ -198,7 +199,10 @@ class TaskManager {
 
     // Update the user display
     let header = document.getElementById("countdown");
-    header.innerHTML = this.timeLeft;
+    const hrs = Math.floor(this.timeLeft / 60);
+    const mins = this.timeLeft % 60;
+
+    header.innerHTML = `${hrs} hours, ${mins} minutes`;
   }
 
   // Update total difficulty and number of tasks based on the specified difficulty level and state
@@ -227,6 +231,21 @@ class TaskManager {
         this.totalDifficulty.innerHTML = "Difficult";
       }
     }
+  }
+
+  completeTask(element, event) {
+    // Update time
+    taskManager.updateDuration(parseInt(element.dataset.duration), false);
+
+    // Update difficulty
+    taskManager.updateDifficulty(parseInt(element.dataset.difficulty), false);
+
+    // Remove the dragged element from the DOM
+    const textContent = event.dataTransfer.getData("text/plain-content");
+    element.parentNode.removeChild(element);
+    handleUndoTask(element);
+    // Print out the task that was completed and removed
+    console.log(`The following task was completed: ${textContent}`);
   }
 }
 
@@ -265,27 +284,34 @@ class Quote {
   }
 }
 
-// Timer functionality
-/* Pomodoro technique:
+/*  
+Timer functionality
+Pomodoro technique:
 25 minutes of work broken into 5 minute breaks
-Every 4 consecutive interals u get a 20 minute break
+Every 4 consecutive interals you get a 20 minute break
 */
 
 class Pomodoro {
   constructor() {
+    // Event Listeners
     document
       .querySelector(".study-timer")
       .addEventListener("click", this.runPomodoro.bind(this)); // Called by the element triggering the event
     document
       .querySelector(".stop-timer")
       .addEventListener("click", this.stopPomodoro.bind(this));
+
+    // DOM element
     this.timerDisplay = document.querySelector(".update-timer");
     this.infoLink = document.querySelector(".pomodoro-link");
     this.currentInterval = document.getElementById("interval-name");
-    // only the counting
+
+    // Progress and countdown initialization
     this.countdown = document.querySelector(".current");
     this.progressBar = document.querySelector(".progress-bar");
     this.progressContainer = document.querySelector(".progress-container");
+
+    // Initialization of the timer state
     this.startTime = 0;
     this.rounds = 0;
     this.intervalID = "";
@@ -293,36 +319,36 @@ class Pomodoro {
   }
 
   runPomodoro() {
-    // Set up to run timer
+    // Update user display and number of rounds
     this.rounds++;
     this.infoLink.classList.remove("pomodoro-link");
     this.infoLink.classList.add("hidden");
     this.currentInterval.innerHTML = "Current interval: 25 minutes of work";
 
-    console.log("Reached 25");
-    // Set appropriate timer + callback
-    if (this.rounds == 4) {
-      this.rounds = 0; // set back to 0 intervals of work time
-      this.showTimer(25);
+    console.log("Reached 25 minutes work");
 
-      this.timeoutID = setTimeout(this.doTwentyBreak.bind(this), 25 * 60000); // after 25 mins of work, get a 20 minute break
+    if (this.rounds == 4) {
+      // Set back to 0 intervals of work time:
+      this.rounds = 0;
+      // Set appropriate timer and callback based on the number of rounds completed
+      this.showTimer(25);
+      this.timeoutID = setTimeout(this.doTwentyBreak.bind(this), 25 * 60000);
     } else {
       this.showTimer(25);
-      this.timeoutID = setTimeout(this.doFiveBreak.bind(this), 25 * 60000); // after 25 mins of work, get a 5 minute break
+      this.timeoutID = setTimeout(this.doFiveBreak.bind(this), 25 * 60000);
     }
   }
 
-  // Five minute break, run 25 after
+  // Functions to handle the breaks and schedule the next work interval
   doFiveBreak() {
-    console.log("Reached 5");
+    console.log("Reached 5 minutes break");
     this.currentInterval.innerHTML = "Current interval: 5 minute break";
     this.showTimer(5);
     this.timeoutID = setTimeout(this.runPomodoro.bind(this), 5 * 60000);
   }
 
-  // Twenty minute break, run 25 after
   doTwentyBreak() {
-    console.log("Reached 20");
+    console.log("Reached 20 minutes break");
     this.currentInterval.innerHTML = "Current interval: 20 minute break";
     this.showTimer(20);
     this.timeoutID = setTimeout(this.runPomodoro.bind(this), 20 * 60000);
@@ -332,8 +358,10 @@ class Pomodoro {
     // Update start time
     this.startTime = Date.now();
 
-    // Count and show elapsed time
+    // CLear any existing intervals to prevent multiple timers running simultaneously
     clearInterval(this.intervalID);
+
+    // Updates and displays the elapsed time every second
     this.intervalID = setInterval(this.updateElapsedTime.bind(this, num), 1000);
   }
 
@@ -363,10 +391,11 @@ class Pomodoro {
       this.progressBar.innerHTML = `${Math.ceil(progress)}%`;
     }
     this.progressContainer.classList.remove("hidden");
-    // Show the time
+    // Show the time left
     this.timerDisplay.classList.remove("hidden");
   }
 
+  // CLear and reset the timer and UI
   stopPomodoro() {
     clearInterval(this.intervalID);
     clearTimeout(this.timeoutID);
@@ -380,29 +409,34 @@ class Pomodoro {
   }
 }
 
-// Global functions
+// Global functions for drag & drop interactions
 
 const removeTasks = document.querySelector(".remove-tasks");
 const dropZone = document.querySelector(".drop-zone");
 
+// Prevent reloading
 function allowDrop(event) {
   event.preventDefault();
 }
 
+// Detect when element is dragged into the task removal container
 removeTasks.addEventListener("dragover", function (event) {
   event.preventDefault();
   enlargeDropZone();
 });
 
+// Detect when element is dragged out of the task removal container
 removeTasks.addEventListener("dragleave", function (event) {
   event.preventDefault();
   resetDropZone();
 });
 
+// Enlarge drop zone when a draggable element is dragged over it
 function enlargeDropZone() {
   dropZone.classList.add("enlarged");
 }
 
+// Set drop zone back to default size
 function resetDropZone() {
   dropZone.classList.remove("enlarged");
 }
@@ -415,6 +449,7 @@ function drag(event) {
   event.dataTransfer.setData("text/plain-content", event.target.textContent);
 }
 
+// Remove a task by dropping
 function drop(event) {
   resetDropZone();
   let draggedId = event.dataTransfer.getData("text/plain");
@@ -425,23 +460,7 @@ function drop(event) {
   // Check if the dragged element exists
   if (draggedElement) {
     // Update time
-    taskManager.updateDuration(
-      parseInt(draggedElement.dataset.duration),
-      false
-    );
-
-    // Update difficulty
-    taskManager.updateDifficulty(
-      parseInt(draggedElement.dataset.difficulty),
-      false
-    );
-
-    // Remove the dragged element from the DOM
-    const textContent = event.dataTransfer.getData("text/plain-content");
-    draggedElement.parentNode.removeChild(draggedElement);
-    taskManager.handleUndoTask(draggedElement);
-    // Print out the task that was completed and removed
-    console.log(`The following task was completed: ${textContent}`);
+    taskManager.completeTask(draggedElement, event);
   }
 }
 
