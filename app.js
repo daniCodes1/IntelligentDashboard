@@ -1,5 +1,33 @@
 "use strict";
 
+class Deque {
+  constructor(size) {
+    // Maximum size of queue
+    this.size = size;
+    this.container = [];
+  }
+
+  addFront(element) {
+    this.container.unshift(element);
+  }
+
+  addBack(element) {
+    this.container.push(element);
+  }
+
+  pop_front() {
+    const temp = this.container[0];
+    this.container.splice(0, 1);
+    return temp;
+  }
+
+  pop_back() {
+    const temp = this.container.slice(-1)[0];
+    this.container.splice(this.container.length - 1, 1);
+    return temp;
+  }
+}
+
 class TaskManager {
   constructor() {
     // DOM elements
@@ -8,12 +36,62 @@ class TaskManager {
     this.congratsMsg = document.querySelector(".congrats");
     this.handleTask = this.handleTask.bind(this);
     this.addBtn.addEventListener("click", this.handleTask);
+    this.undoBtn = document.querySelector(".undo");
+    this.undoBtn.addEventListener("click", this.reAddTask.bind(this));
 
     // Properties
     this.totalTasks = 0;
     this.difficulty = 0;
     this.timeLeft = 0;
+    this.removeTask = false;
   }
+
+  handleUndoTask(draggedElement) {
+    console.log("This is being called");
+    const size = dequeObject.size;
+    if (dequeObject.container.length + 1 > size) {
+      const delElem = dequeObject.pop_front();
+
+      // logic in here
+    }
+    dequeObject.addFront(draggedElement);
+
+    // if (this.totalTasks >= 12) {
+    //   alert("You are at the maximum number of tasks");
+
+    // addTask(
+    //   draggedElement.dataset.name,
+    //   draggedElement.dataset.duration,
+    //   draggedElement.dataset.difficulty
+    // );
+  }
+
+  reAddTask() {
+    if (dequeObject.container.length > 0) {
+      const lastElem = dequeObject.pop_front();
+      console.log(lastElem);
+      if (this.totalTasks >= 12) {
+        alert("You are at the maximum number of tasks");
+      }
+      this.congratsMsg.classList.add("hidden");
+      this.addTask(
+        lastElem.dataset.name,
+        lastElem.dataset.duration,
+        lastElem.dataset.difficulty
+      );
+    } else {
+      alert("You have no deleted tasks");
+    }
+  }
+
+  /*
+    1.) implement a double ended queue YAY 
+    2.) need to populate the queue when task removed  
+    3.) set parameter to maintain max size of undo 
+    4.) if queue reaches capacity begin removing things from the end of the queue 
+    5.) figure out a way to add the task back to the grid
+    6.) update everything else (with click)
+    */
 
   handleTask() {
     event.preventDefault();
@@ -59,6 +137,8 @@ class TaskManager {
     div.setAttribute("ondragstart", "drag(event)");
     div.dataset.duration = newTaskDuration;
     div.dataset.difficulty = newTaskDifficulty;
+    div.dataset.name = newTaskName;
+    // div.addEventListener("click", replace); // TODO
 
     // Set ID
     const idName = newTaskName.replace(/\s+/g, "");
@@ -314,7 +394,6 @@ function drag(event) {
 }
 
 function drop(event) {
-  event.preventDefault();
   let draggedId = event.dataTransfer.getData("text/plain");
 
   // Get a reference to the dragged element
@@ -337,7 +416,7 @@ function drop(event) {
     // Remove the dragged element from the DOM
     const textContent = event.dataTransfer.getData("text/plain-content");
     draggedElement.parentNode.removeChild(draggedElement);
-
+    taskManager.handleUndoTask(draggedElement);
     // Print out the task that was completed and removed
     console.log(`The following task was completed: ${textContent}`);
   }
@@ -345,4 +424,5 @@ function drop(event) {
 
 const taskManager = new TaskManager();
 const quote = new Quote();
+const dequeObject = new Deque(5); // pass in default size
 const pomodoro = new Pomodoro();
