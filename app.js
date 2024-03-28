@@ -80,7 +80,7 @@ class TaskManager {
         lastElem.dataset.difficulty
       );
     } else {
-      alert("You have no deleted tasks");
+      alert("You have no more deleted tasks");
     }
   }
 
@@ -293,7 +293,7 @@ class Pomodoro {
   }
 
   runPomodoro() {
-    console.log("starting");
+    // Set up to run timer
     this.rounds++;
     this.infoLink.classList.remove("pomodoro-link");
     this.infoLink.classList.add("hidden");
@@ -381,8 +381,30 @@ class Pomodoro {
 }
 
 // Global functions
+
+const removeTasks = document.querySelector(".remove-tasks");
+const dropZone = document.querySelector(".drop-zone");
+
 function allowDrop(event) {
   event.preventDefault();
+}
+
+removeTasks.addEventListener("dragover", function (event) {
+  event.preventDefault();
+  enlargeDropZone();
+});
+
+removeTasks.addEventListener("dragleave", function (event) {
+  event.preventDefault();
+  resetDropZone();
+});
+
+function enlargeDropZone() {
+  dropZone.classList.add("enlarged");
+}
+
+function resetDropZone() {
+  dropZone.classList.remove("enlarged");
 }
 
 function drag(event) {
@@ -394,6 +416,7 @@ function drag(event) {
 }
 
 function drop(event) {
+  resetDropZone();
   let draggedId = event.dataTransfer.getData("text/plain");
 
   // Get a reference to the dragged element
