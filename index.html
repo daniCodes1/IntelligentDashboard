@@ -14,15 +14,17 @@
       <div class="stats">
         <h2> YOUR STATISTICS </h2>
         <h3> Duration left: </h3>
-        <h4 id="countdown"> 0 minutes </h4>
+        <h4 id="countdown"> 0 hours, 0 minutes </h4>
         <h3> Difficulty level: </h3>
         <h4 id="stat-difficulty"> No tasks </h4>
+
         <!-- <h3> Progress towards goal: </h3>
         <h4> 0% </h4> -->
 
         <h3> Need a boost? </h3>
         <button class="btn quote"> Motivational Quote </button>
         <h3 class="user-quote hidden"> </h3>
+
       </div>
 
       <div class="main-screen">
@@ -32,6 +34,7 @@
         <div class="row">
           <div class="column1"></div>
           <div class="column2"></div>
+
         </div>
         <!-- <div class="box" id="one" draggable="true" ondragstart="drag(event)">
           English discussion post
@@ -76,7 +79,7 @@
 
       <div class="timer-class">
 
-        <h2> SET TIMER: </h2>
+        <h2> SET TIMER </h2>
         <button class="btn study-timer"> Pomodoro Timer </button>
         <button class="btn stop-timer"> Stop timer </button>
         <div class="update-timer hidden">
@@ -99,7 +102,11 @@
         <!-- this here -->
         <h2> REMOVE A TASK </h2>
         <h3 class="drop-zone"> Drag here </h3>
-        <button class="btn undo">Undo</button>
+        <div class="last-removed hidden"> Hello </div>
+        <div class="btn-actions">
+          <button class="btn undo">Undo</button>
+          <button class="btn redo">Redo</button>
+        </div>
       </div>
     </div>
     <script src="app.js"> </script>
