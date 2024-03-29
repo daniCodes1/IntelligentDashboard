@@ -23,7 +23,7 @@ h1 {
 h2 {
   font-size: 25px;
   text-align: center;
-  font-family: "Bradley Hand", "cursive";
+  font-family: "Times New Roman", "cursive";
   color: rgb(54, 53, 53);
   /* because actual black is too bold */
 }
@@ -88,8 +88,6 @@ h5 {
   align-items: center;
   /* margin-right: 20px; */
   margin-left: 45;
-
-
 }
 
 /* box class */
@@ -285,4 +283,16 @@ h5 {
   border-radius: 15px;
   margin-top: 5px;
   margin-bottom: 7px;
+}
+
+.btn-actions {
+  margin-top: auto;
+  margin-bottom: 3px;
+}
+
+.last-removed {
+  padding: 15px;
+  font-size: 22px;
+  font-family: "Comic Sans MS", "Comic Sans", "cursive";
+  text-align: center;
 }
