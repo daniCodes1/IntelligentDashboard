@@ -46,39 +46,35 @@ class TaskManager {
     this.removeTask = false;
   }
 
+  // Manages queue for deleted elements if user wants to undo deletion
   handleUndoTask(draggedElement) {
     console.log("This is being called");
     const size = dequeObject.size;
     if (dequeObject.container.length + 1 > size) {
       const delElem = dequeObject.pop_front();
-
-      // logic in here
     }
     dequeObject.addFront(draggedElement);
-
-    // if (this.totalTasks >= 12) {
-    //   alert("You are at the maximum number of tasks");
-
-    // addTask(
-    //   draggedElement.dataset.name,
-    //   draggedElement.dataset.duration,
-    //   draggedElement.dataset.difficulty
-    // );
   }
 
+  // Re-adds the last removed task back into the task list
   reAddTask() {
+    // Check if there are tasks in queue
     if (dequeObject.container.length > 0) {
+      // Get last removed task and its properties
       const lastElem = dequeObject.pop_front();
-      console.log(lastElem);
+      const objName = lastElem.dataset.name;
+
+      const objDuration = Number(lastElem.dataset.duration);
+      const objDifficulty = Number(lastElem.dataset.difficulty);
+
+      // Process re-addition of task
       if (this.totalTasks >= 12) {
         alert("You are at the maximum number of tasks");
       }
       this.congratsMsg.classList.add("hidden");
-      this.addTask(
-        lastElem.dataset.name,
-        lastElem.dataset.duration,
-        lastElem.dataset.difficulty
-      );
+      this.addTask(objName, objDuration, objDifficulty);
+      this.updateDuration(objDuration, true);
+      this.updateDifficulty(objDifficulty, true);
     } else {
       alert("You have no more deleted tasks");
     }
@@ -243,9 +239,20 @@ class TaskManager {
     // Remove the dragged element from the DOM
     const textContent = event.dataTransfer.getData("text/plain-content");
     element.parentNode.removeChild(element);
-    handleUndoTask(element);
+    this.handleUndoTask(element);
     // Print out the task that was completed and removed
     console.log(`The following task was completed: ${textContent}`);
+
+    const dropZone = document.querySelector(".drop-zone");
+    const removedTask = document.querySelector(".last-removed");
+    dropZone.classList.add("hidden");
+    removedTask.classList.remove("hidden");
+    removedTask.innerHTML = `You completed: ${textContent}`;
+    console.log(textContent);
+    setTimeout(() => {
+      dropZone.classList.remove("hidden");
+      removedTask.classList.add("hidden");
+    }, 1500);
   }
 }
 
