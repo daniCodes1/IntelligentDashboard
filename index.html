@@ -23,19 +23,31 @@
 
         <h3> Need a boost? </h3>
         <button class="btn quote"> Motivational Quote </button>
+        <button onclick="togglePopup()" class="btn goal-btn">Set a goal</button>
         <h3 class="user-quote hidden"> </h3>
 
+        <div class="popup-overlay" id="popupOverlay">
+          <div class="popup" id="popup">
+            <form>
+              <label for="gname">Set your goal (number of minutes of
+                work)</label><br>
+              <input type="txt" id="gname" name="gname"><br>
+              <button onclick="togglePopupAndAddGoal()">Done</button>
+            </form>
+          </div>
+        </div>
       </div>
 
       <div class="main-screen">
         <h2> YOUR TASKS </h2>
-        <h3 class="congrats hidden"> Congratulations! All tasks are finished,
+        <h3 class="congrats hidden"> Congratulations! All tasks are
+          finished,
           productivity god! </h3>
         <div class="row">
           <div class="column1"></div>
           <div class="column2"></div>
-
         </div>
+
         <!-- <div class="box" id="one" draggable="true" ondragstart="drag(event)">
           English discussion post
           <h5> [5 minutes] </h5>
