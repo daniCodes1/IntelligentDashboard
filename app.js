@@ -237,18 +237,15 @@ class TaskManager {
     taskManager.updateDifficulty(parseInt(element.dataset.difficulty), false);
 
     // Remove the dragged element from the DOM
-    const textContent = event.dataTransfer.getData("text/plain-content");
+    // const textContent = event.dataTransfer.getData("text/plain-content");
     element.parentNode.removeChild(element);
     this.handleUndoTask(element);
-    // Print out the task that was completed and removed
-    console.log(`The following task was completed: ${textContent}`);
 
     const dropZone = document.querySelector(".drop-zone");
     const removedTask = document.querySelector(".last-removed");
     dropZone.classList.add("hidden");
     removedTask.classList.remove("hidden");
-    removedTask.innerHTML = `You completed: ${textContent}`;
-    console.log(textContent);
+    removedTask.innerHTML = `You completed: ${element.dataset.name} in ${element.dataset.duration} minutes!`;
     setTimeout(() => {
       dropZone.classList.remove("hidden");
       removedTask.classList.add("hidden");
