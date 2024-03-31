@@ -38,30 +38,35 @@ class TaskManager {
     this.addBtn.addEventListener("click", this.handleTask);
     this.undoBtn = document.querySelector(".undo");
     this.undoBtn.addEventListener("click", this.reAddTask.bind(this));
+    this.redoBtn = document.querySelector(".redo");
+    this.redoBtn.addEventListener("click", this.redoTask.bind(this));
 
     // Properties
     this.totalTasks = 0;
     this.difficulty = 0;
     this.timeLeft = 0;
     this.removeTask = false;
+    this.goal = 0;
+    this.progress = 0;
+    this.goalReached = false;
   }
 
   // Manages queue for deleted elements if user wants to undo deletion
   handleUndoTask(draggedElement) {
     console.log("This is being called");
-    const size = dequeObject.size;
-    if (dequeObject.container.length + 1 > size) {
-      const delElem = dequeObject.pop_front();
+    const deletedSize = deletedDeque.size;
+    if (deletedDeque.container.length + 1 > deletedSize) {
+      const delElem = deletedDeque.pop_front();
     }
-    dequeObject.addFront(draggedElement);
+    deletedDeque.addFront(draggedElement);
   }
 
   // Re-adds the last removed task back into the task list
   reAddTask() {
     // Check if there are tasks in queue
-    if (dequeObject.container.length > 0) {
+    if (deletedDeque.container.length > 0) {
       // Get last removed task and its properties
-      const lastElem = dequeObject.pop_front();
+      const lastElem = deletedDeque.pop_front();
       const objName = lastElem.dataset.name;
 
       const objDuration = Number(lastElem.dataset.duration);
@@ -75,8 +80,34 @@ class TaskManager {
       this.addTask(objName, objDuration, objDifficulty);
       this.updateDuration(objDuration, true);
       this.updateDifficulty(objDifficulty, true);
+
+      // Process for redos:
+      this.handleRedoTask(lastElem);
     } else {
       alert("You have no more deleted tasks");
+    }
+  }
+
+  handleRedoTask(element) {
+    const redoSize = redoDeque.size;
+    if (redoDeque.container.length + 1 > redoSize) {
+      const redoElem = redoDeque.pop_front();
+    }
+    redoDeque.addFront(element);
+  }
+
+  redoTask() {
+    if (redoDeque.container.length > 0) {
+      //   Get reference to the correct element
+      const lastElem = redoDeque.pop_front();
+      const elemName = lastElem.dataset.name;
+      const elemID = elemName.replace(/\s+/g, "");
+      const elem = document.getElementById(elemID);
+      if (elem) {
+        this.completeTask(elem);
+      }
+    } else {
+      alert("There are no tasks that you undid");
     }
   }
 
@@ -198,7 +229,18 @@ class TaskManager {
     const hrs = Math.floor(this.timeLeft / 60);
     const mins = this.timeLeft % 60;
 
-    header.innerHTML = `${hrs} hours, ${mins} minutes`;
+    // header.innerHTML = `${hrs} hour, ${mins} minutes`;
+
+    let hourText = "";
+    if (hrs === 1) {
+      hourText = "hour";
+    } else if (hrs > 1) {
+      hourText = "hours";
+    }
+    let minuteText = mins === 1 ? "minute" : "minutes";
+    header.innerHTML = `${
+      hrs > 0 ? `${hrs} ${hourText}, ` : ""
+    }${mins} ${minuteText}`;
   }
 
   // Update total difficulty and number of tasks based on the specified difficulty level and state
@@ -229,23 +271,33 @@ class TaskManager {
     }
   }
 
-  completeTask(element, event) {
+  completeTask(element) {
+    // Remove the dragged element from the DOM
+    // const textContent = event.dataTransfer.getData("text/plain-content");
+    element.parentNode.removeChild(element);
+    this.handleUndoTask(element);
+
     // Update time
     taskManager.updateDuration(parseInt(element.dataset.duration), false);
 
     // Update difficulty
     taskManager.updateDifficulty(parseInt(element.dataset.difficulty), false);
-
-    // Remove the dragged element from the DOM
-    // const textContent = event.dataTransfer.getData("text/plain-content");
-    element.parentNode.removeChild(element);
-    this.handleUndoTask(element);
+    this.progress += element.dataset.duration;
+    if (Number(this.goal) > 0) {
+      if (this.progress >= this.goal && this.goalReached == false) {
+        alert("Congrats, you have reached your goal!");
+        this.goalReached = true;
+      }
+      let goalProgress = document.getElementById("goal-progress");
+      goalProgress.innerHTML = `${(this.progress / this.goal) * 100} %`;
+    }
 
     const dropZone = document.querySelector(".drop-zone");
     const removedTask = document.querySelector(".last-removed");
     dropZone.classList.add("hidden");
     removedTask.classList.remove("hidden");
     removedTask.innerHTML = `You completed: ${element.dataset.name} in ${element.dataset.duration} minutes!`;
+
     setTimeout(() => {
       dropZone.classList.remove("hidden");
       removedTask.classList.add("hidden");
@@ -464,11 +516,12 @@ function drop(event) {
   // Check if the dragged element exists
   if (draggedElement) {
     // Update time
-    taskManager.completeTask(draggedElement, event);
+    taskManager.completeTask(draggedElement);
   }
 }
 
 const taskManager = new TaskManager();
 const quote = new Quote();
-const dequeObject = new Deque(5); // pass in default size
+const deletedDeque = new Deque(5); // pass in default size
+const redoDeque = new Deque(5);
 const pomodoro = new Pomodoro();
