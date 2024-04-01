@@ -282,16 +282,29 @@ class TaskManager {
 
     // Update difficulty
     taskManager.updateDifficulty(parseInt(element.dataset.difficulty), false);
-    this.progress += element.dataset.duration;
-    if (Number(this.goal) > 0) {
-      if (this.progress >= this.goal && this.goalReached == false) {
-        alert("Congrats, you have reached your goal!");
-        this.goalReached = true;
-      }
+
+    console.log(typeof this.goal);
+    console.log(typeof this.progress);
+    // Update progress
+    this.progress += parseInt(element.dataset.duration);
+    console.log(`total completed duration is ${this.progress}`);
+    // if (Number(this.goal) > 0) {
+    if (this.goalReached == true) {
       let goalProgress = document.getElementById("goal-progress");
-      goalProgress.innerHTML = `${(this.progress / this.goal) * 100} %`;
+      goalProgress.innerHTML = `You reached your goal of ${this.goal}! Your progress: ${this.progress} minutes.`;
+    } else if (this.progress >= this.goal && this.goal != 0) {
+      alert("Congrats, you have reached your goal!");
+      this.goalReached = true;
+      let goalProgress = document.getElementById("goal-progress");
+      goalProgress.innerHTML = `You reached your goal of ${this.goal}! Your progress: ${this.progress} minutes.`;
+    } else if (this.goal != 0) {
+      let goalProgress = document.getElementById("goal-progress");
+      goalProgress.innerHTML = `${Math.round(
+        (this.progress / this.goal) * 100
+      )} %`;
     }
 
+    // Show user display of compelted task
     const dropZone = document.querySelector(".drop-zone");
     const removedTask = document.querySelector(".last-removed");
     dropZone.classList.add("hidden");
@@ -517,6 +530,32 @@ function drop(event) {
   if (draggedElement) {
     // Update time
     taskManager.completeTask(draggedElement);
+  }
+}
+
+// Popup for setting a work goal
+function togglePopup(event) {
+  event.preventDefault();
+  let popupOverlay = document.getElementById("popupOverlay");
+  popupOverlay.style.display =
+    popupOverlay.style.display === "block" ? "none" : "block";
+}
+
+function togglePopupAndAddGoal(event) {
+  event.preventDefault();
+  togglePopup(event);
+  const newGoal = document.getElementById("gname").value;
+  if (!Number.isInteger(Number(newGoal)) || Number(newGoal) <= 0) {
+    alert("Goal must be a positive number of minutes");
+  } else if (Number(newGoal) <= taskManager.progress) {
+    alert("Your goal should be greater than your current progress!");
+  } else {
+    taskManager.goalReached = false;
+    taskManager.goal = Number(newGoal);
+    let goalProgress = document.getElementById("goal-progress");
+    goalProgress.innerHTML = `${Math.round(
+      (taskManager.progress / Number(newGoal)) * 100
+    )} %`;
   }
 }
 
