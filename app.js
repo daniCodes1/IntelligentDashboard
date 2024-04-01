@@ -15,16 +15,12 @@ class Deque {
     this.container.push(element);
   }
 
-  pop_front() {
-    const temp = this.container[0];
-    this.container.splice(0, 1);
-    return temp;
+  popFront() {
+    return this.container.shift();
   }
 
-  pop_back() {
-    const temp = this.container.slice(-1)[0];
-    this.container.splice(this.container.length - 1, 1);
-    return temp;
+  popBack() {
+    return this.container.pop();
   }
 }
 
@@ -51,75 +47,6 @@ class TaskManager {
     this.goalReached = false;
   }
 
-  // Manages queue for deleted elements if user wants to undo deletion
-  handleUndoTask(draggedElement) {
-    console.log("This is being called");
-    const deletedSize = deletedDeque.size;
-    if (deletedDeque.container.length + 1 > deletedSize) {
-      const delElem = deletedDeque.pop_front();
-    }
-    deletedDeque.addFront(draggedElement);
-  }
-
-  // Re-adds the last removed task back into the task list
-  reAddTask() {
-    // Check if there are tasks in queue
-    if (deletedDeque.container.length > 0) {
-      // Get last removed task and its properties
-      const lastElem = deletedDeque.pop_front();
-      const objName = lastElem.dataset.name;
-
-      const objDuration = Number(lastElem.dataset.duration);
-      const objDifficulty = Number(lastElem.dataset.difficulty);
-
-      // Process re-addition of task
-      if (this.totalTasks >= 12) {
-        alert("You are at the maximum number of tasks");
-      }
-      this.congratsMsg.classList.add("hidden");
-      this.addTask(objName, objDuration, objDifficulty);
-      this.updateDuration(objDuration, true);
-      this.updateDifficulty(objDifficulty, true);
-
-      // Process for redos:
-      this.handleRedoTask(lastElem);
-    } else {
-      alert("You have no more deleted tasks");
-    }
-  }
-
-  handleRedoTask(element) {
-    const redoSize = redoDeque.size;
-    if (redoDeque.container.length + 1 > redoSize) {
-      const redoElem = redoDeque.pop_front();
-    }
-    redoDeque.addFront(element);
-  }
-
-  redoTask() {
-    if (redoDeque.container.length > 0) {
-      //   Get reference to the correct element
-      const lastElem = redoDeque.pop_front();
-      const elemName = lastElem.dataset.name;
-      const elemID = elemName.replace(/\s+/g, "");
-      const elem = document.getElementById(elemID);
-      if (elem) {
-        this.completeTask(elem);
-      }
-    } else {
-      alert("There are no tasks that you undid");
-    }
-  }
-
-  /*
-    1.) implement a double ended queue YAY 
-    2.) need to populate the queue when task removed  
-    3.) set parameter to maintain max size of undo 
-    4.) if queue reaches capacity begin removing things from the end of the queue 
-    5.) figure out a way to add the task back to the grid
-    6.) update everything else (with click)
-    */
-
   handleTask() {
     event.preventDefault();
 
@@ -142,7 +69,12 @@ class TaskManager {
         )
       ) {
         // Proceed with task creation
-        this.addTask(newTaskName, newTaskDuration, newTaskDifficulty);
+        let newTask = this.createTask(
+          newTaskName,
+          newTaskDuration,
+          newTaskDifficulty
+        );
+        this.addTask(newTask);
 
         // Manage states
         this.updateDuration(newTaskDuration, true);
@@ -156,7 +88,7 @@ class TaskManager {
     }
   }
 
-  addTask(newTaskName, newTaskDuration, newTaskDifficulty) {
+  createTask(newTaskName, newTaskDuration, newTaskDifficulty) {
     // Set task attributes
     let div = document.createElement("div");
     div.setAttribute("class", "box");
@@ -172,14 +104,20 @@ class TaskManager {
     const idName = newTaskName.replace(/\s+/g, "");
     div.setAttribute("id", `${idName}`);
 
-    // Add task element to the task list, alternating between two columns if one column is full
+    // Set user display
     div.innerHTML = `${newTaskName} <h5>[${newTaskDuration} minutes]</h5>`;
+
+    return div;
+  }
+
+  // Add task element to either column based on the number of tasks in column1.
+  addTask(task) {
     const leftChildren = document.querySelector(".column1").children.length;
     if (leftChildren < 6) {
-      document.querySelector(".column1").appendChild(div);
+      document.querySelector(".column1").appendChild(task);
       console.log(`Tasks on left: ${leftChildren}`);
     } else {
-      document.querySelector(".column2").appendChild(div);
+      document.querySelector(".column2").appendChild(task);
     }
   }
 
@@ -229,15 +167,19 @@ class TaskManager {
     const hrs = Math.floor(this.timeLeft / 60);
     const mins = this.timeLeft % 60;
 
-    // header.innerHTML = `${hrs} hour, ${mins} minutes`;
-
+    // Format time into a string
     let hourText = "";
+
+    // Determine if hour is singular or plural
     if (hrs === 1) {
       hourText = "hour";
     } else if (hrs > 1) {
       hourText = "hours";
     }
+    // Determine if minute is singular or plural
     let minuteText = mins === 1 ? "minute" : "minutes";
+
+    // Set header for user display
     header.innerHTML = `${
       hrs > 0 ? `${hrs} ${hourText}, ` : ""
     }${mins} ${minuteText}`;
@@ -273,8 +215,9 @@ class TaskManager {
 
   completeTask(element) {
     // Remove the dragged element from the DOM
-    // const textContent = event.dataTransfer.getData("text/plain-content");
     element.parentNode.removeChild(element);
+
+    // Update the queue for potential undo
     this.handleUndoTask(element);
 
     // Update time
@@ -283,26 +226,9 @@ class TaskManager {
     // Update difficulty
     taskManager.updateDifficulty(parseInt(element.dataset.difficulty), false);
 
-    console.log(typeof this.goal);
-    console.log(typeof this.progress);
-    // Update progress
     this.progress += parseInt(element.dataset.duration);
-    console.log(`total completed duration is ${this.progress}`);
-    // if (Number(this.goal) > 0) {
-    if (this.goalReached == true) {
-      let goalProgress = document.getElementById("goal-progress");
-      goalProgress.innerHTML = `You reached your goal of ${this.goal}! Your progress: ${this.progress} minutes.`;
-    } else if (this.progress >= this.goal && this.goal != 0) {
-      alert("Congrats, you have reached your goal!");
-      this.goalReached = true;
-      let goalProgress = document.getElementById("goal-progress");
-      goalProgress.innerHTML = `You reached your goal of ${this.goal}! Your progress: ${this.progress} minutes.`;
-    } else if (this.goal != 0) {
-      let goalProgress = document.getElementById("goal-progress");
-      goalProgress.innerHTML = `${Math.round(
-        (this.progress / this.goal) * 100
-      )} %`;
-    }
+    // Update progress and goal status
+    this.handleProgress();
 
     // Show user display of compelted task
     const dropZone = document.querySelector(".drop-zone");
@@ -315,6 +241,84 @@ class TaskManager {
       dropZone.classList.remove("hidden");
       removedTask.classList.add("hidden");
     }, 1500);
+  }
+
+  handleProgress() {
+    console.log(`total completed duration is ${this.progress}`);
+    let goalProgress = document.getElementById("goal-progress");
+
+    if (this.goalReached == true) {
+      goalProgress.innerHTML = `You reached your goal of ${this.goal}! Your progress: ${this.progress} minutes.`;
+    } else if (this.progress >= this.goal && this.goal != 0) {
+      alert("Congrats, you have reached your goal!");
+      this.goalReached = true;
+      goalProgress.innerHTML = `You reached your goal of ${this.goal}! Your progress: ${this.progress} minutes.`;
+    } else if (this.goal != 0) {
+      goalProgress.innerHTML = `${Math.round(
+        (this.progress / this.goal) * 100
+      )} %`;
+    }
+  }
+
+  // Manages queue for deleted elements if user wants to undo deletion
+  handleUndoTask(draggedElement) {
+    console.log("This is being called");
+    const deletedSize = deletedDeque.size;
+    if (deletedDeque.container.length + 1 > deletedSize) {
+      deletedDeque.popBack();
+    }
+    deletedDeque.addFront(draggedElement);
+  }
+
+  // Re-adds the last removed task back into the task list
+  reAddTask() {
+    // Check if there are tasks in queue
+    if (deletedDeque.container.length > 0) {
+      // Get last removed task and its properties
+      const lastElem = deletedDeque.popFront();
+      const objName = lastElem.dataset.name;
+
+      const objDuration = Number(lastElem.dataset.duration);
+      const objDifficulty = Number(lastElem.dataset.difficulty);
+
+      // Process re-addition of task
+      if (this.totalTasks >= 12) {
+        alert("You are at the maximum number of tasks");
+      }
+      this.congratsMsg.classList.add("hidden");
+      let newTask = this.createTask(objName, objDuration, objDifficulty);
+      this.addTask(newTask);
+      this.updateDuration(objDuration, true);
+      this.updateDifficulty(objDifficulty, true);
+
+      // Process for redos:
+      this.handleRedoTask(lastElem);
+    } else {
+      alert("You have no more deleted tasks");
+    }
+  }
+
+  handleRedoTask(element) {
+    const redoSize = redoDeque.size;
+    if (redoDeque.container.length + 1 > redoSize) {
+      const redoElem = redoDeque.popBack();
+    }
+    redoDeque.addFront(element);
+  }
+
+  redoTask() {
+    if (redoDeque.container.length > 0) {
+      //   Get reference to the correct element
+      const lastElem = redoDeque.popFront();
+      const elemName = lastElem.dataset.name;
+      const elemID = elemName.replace(/\s+/g, "");
+      const elem = document.getElementById(elemID);
+      if (elem) {
+        this.completeTask(elem);
+      }
+    } else {
+      alert("There are no tasks that you undid");
+    }
   }
 }
 
@@ -540,11 +544,11 @@ function togglePopup(event) {
   popupOverlay.style.display =
     popupOverlay.style.display === "block" ? "none" : "block";
 }
-
 function togglePopupAndAddGoal(event) {
   event.preventDefault();
   togglePopup(event);
-  const newGoal = document.getElementById("gname").value;
+
+  let newGoal = document.getElementById("gname").value;
   if (!Number.isInteger(Number(newGoal)) || Number(newGoal) <= 0) {
     alert("Goal must be a positive number of minutes");
   } else if (Number(newGoal) <= taskManager.progress) {
@@ -557,6 +561,7 @@ function togglePopupAndAddGoal(event) {
       (taskManager.progress / Number(newGoal)) * 100
     )} %`;
   }
+  document.getElementById("gname").value = "";
 }
 
 const taskManager = new TaskManager();
