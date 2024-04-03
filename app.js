@@ -291,6 +291,13 @@ class TaskManager {
       this.updateDuration(objDuration, true);
       this.updateDifficulty(objDifficulty, true);
 
+      // Update the goal section
+      this.progress -= objDuration;
+      if (this.progress < this.goal) {
+        this.goalReached = false;
+      }
+      this.handleProgress();
+
       // Process for redos:
       this.handleRedoTask(lastElem);
     } else {
@@ -537,23 +544,28 @@ function drop(event) {
   }
 }
 
-// Popup for setting a work goal
+// Global functions for popup toggling
+
+// Toggle popup for goal-setting screen
 function togglePopup(event) {
   event.preventDefault();
   let popupOverlay = document.getElementById("popupOverlay");
   popupOverlay.style.display =
     popupOverlay.style.display === "block" ? "none" : "block";
 }
+
 function togglePopupAndAddGoal(event) {
   event.preventDefault();
   togglePopup(event);
 
+  // Validate goal input
   let newGoal = document.getElementById("gname").value;
   if (!Number.isInteger(Number(newGoal)) || Number(newGoal) <= 0) {
     alert("Goal must be a positive number of minutes");
   } else if (Number(newGoal) <= taskManager.progress) {
     alert("Your goal should be greater than your current progress!");
   } else {
+    // Set new goal and update user display
     taskManager.goalReached = false;
     taskManager.goal = Number(newGoal);
     let goalProgress = document.getElementById("goal-progress");
@@ -561,6 +573,7 @@ function togglePopupAndAddGoal(event) {
       (taskManager.progress / Number(newGoal)) * 100
     )} %`;
   }
+  // Set input field back to empty
   document.getElementById("gname").value = "";
 }
 
