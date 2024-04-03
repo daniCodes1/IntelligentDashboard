@@ -17,22 +17,28 @@
         <h4 id="countdown"> 0 hours, 0 minutes </h4>
         <h3> Difficulty level: </h3>
         <h4 id="stat-difficulty"> No tasks </h4>
+        <h3> Progress towards goal: </h3>
+        <h4 id="goal-progress"> Goal not set </h4>
 
         <!-- <h3> Progress towards goal: </h3>
         <h4> 0% </h4> -->
 
         <h3> Need a boost? </h3>
         <button class="btn quote"> Motivational Quote </button>
-        <button onclick="togglePopup()" class="btn goal-btn">Set a goal</button>
-        <h3 class="user-quote hidden"> </h3>
+        <button onclick="togglePopup(event)" class="btn goal-btn">Set a
+          goal</button>
+        <h1 class="user-quote hidden"> </h1>
 
         <div class="popup-overlay" id="popupOverlay">
           <div class="popup" id="popup">
             <form>
               <label for="gname">Set your goal (number of minutes of
                 work)</label><br>
-              <input type="txt" id="gname" name="gname"><br>
-              <button onclick="togglePopupAndAddGoal()">Done</button>
+              <input type="text" id="gname" name="gname"><br>
+              <button onclick="togglePopupAndAddGoal(event)"
+                class="btn">Done</button>
+              <button onclick="togglePopup(event)"
+                class="btn back-btn">Back</button>
             </form>
           </div>
         </div>
@@ -41,8 +47,7 @@
       <div class="main-screen">
         <h2> YOUR TASKS </h2>
         <h3 class="congrats hidden"> Congratulations! All tasks are
-          finished,
-          productivity god! </h3>
+          finished, you are a productivity legend! 🤩 </h3>
         <div class="row">
           <div class="column1"></div>
           <div class="column2"></div>
