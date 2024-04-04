@@ -45,7 +45,10 @@ def index():
             return f"Error: {e}"
         
     # See all current events
-    return render_template("index.html")
+    else:
+        # Sort by calendar events by date
+        events = MyEvent.query.order_by(MyEvent.created).all()
+        return render_template("index.html", events=events)
 
 
 
