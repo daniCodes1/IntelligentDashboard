@@ -61,6 +61,20 @@ def delete(id):
         return redirect("/")
     except Exception as e:
         return f"Error: {e}"
+    
+# Edit a calendar event
+@app.route("/edit/<int:id>", methods=['GET', 'POST'])
+def edit(id):
+    ev = MyEvent.query.get_or_404(id)
+    if request.method == "POST":
+        ev.content = request.form['content']
+        try: 
+            db.session.commit()
+            return redirect("/")
+        except Exception as e:
+            return f"Error: {e}"
+    else:
+        return "HOME"
 
 if __name__ in "__main__":
     with app.app_context():
