@@ -50,7 +50,17 @@ def index():
         events = MyEvent.query.order_by(MyEvent.created).all()
         return render_template("index.html", events=events)
 
-
+# Delete a calendar event
+@app.route("/delete/<int:id>")
+# ID will be an integer
+def delete(id):
+    delete_event = MyEvent.query.get_or_404(id)
+    try:
+        db.session.delete(delete_event)
+        db.session.commit()
+        return redirect("/")
+    except Exception as e:
+        return f"Error: {e}"
 
 if __name__ in "__main__":
     with app.app_context():
