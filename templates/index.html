@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title> Events </title>
+{% endblock %}
+
+{% block body %}
+<div class="content">
+    <h1> Events </h1>
+
+    {% if events | length < 1 %}
+    <h3> There are no events... Create one here!</h3>
+    {% else %}
+    <table>
+        <tr>
+            <th>Event</th>
+            <th>Added</th>
+            <th>Actions</th>
+        </tr>
+        {% for event in events %}
+        <tr>
+            <td>{{event.content}}</td>
+            <td>{{event.created.strftime("%Y-%m-%d")}}</td>
+            <td>
+                <a href="/delete/{{event.id}}">Delete</a>
+                <a href="/update/{{event.id}}">Edit</a>
+                <br>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    <form action="/" method="POST">
+        <input type="text" name="content" id="content" />
+        <input type="submit" value="Add Event" id="btn_add" />
+
+    </form>
+</div>
+
+{% endblock %}
