@@ -7,20 +7,28 @@
 {% block body %}
 <div class="content">
     <h1> Events </h1>
+    <div class="form-container">
+        <h3> Add an event to your calendar: </h1>
+        <form action="/" method="POST">
+            <input type="text" name="content" id="content" />
+            <input type="date" name="event-date" id="event-date" />
+            <input type="submit" value="Add Event" id="btn_add" />
+        </form>
+    </div>
 
     {% if events | length < 1 %}
-    <h3> There are no events... Create one here!</h3>
+    <h3> You have no upcoming events. </h3>
     {% else %}
-    <table>
+    <table class="list-events">
         <tr>
-            <th>Event</th>
-            <th>Added</th>
-            <th>Actions</th>
+            <th>EVENT</th>
+            <th>DATE</th>
+            <th>ACTIONS</th>
         </tr>
         {% for event in events %}
         <tr>
             <td>{{event.content}}</td>
-            <td>{{event.created.strftime("%Y-%m-%d")}}</td>
+            <td>{{event.evDate.strftime("%Y-%m-%d")}}</td>
             <td>
                 <a href="/delete/{{event.id}}">Delete</a>
                 <a href="/edit/{{event.id}}">Edit</a>
@@ -29,12 +37,39 @@
         </tr>
         {% endfor %}
     </table>
-    {% endif %}
-    <form action="/" method="POST">
-        <input type="text" name="content" id="content" />
-        <input type="submit" value="Add Event" id="btn_add" />
 
-    </form>
+    <!-- <h1 class="event-title"> Your upcoming events </h1> -->
+    <img src="static/upcoming-events.webp" alt="Upcoming Events icon"
+        width="100"
+        height="100" class="events-img">
+    <table class="event-table">
+        {% for event in events %}
+        {% if loop.index % 5 == 1 %}
+        <tr>
+            {% endif %}
+            <td>
+                <div class="card">
+                    <div class="card-content">
+                        <div class="date-box">
+                            {{ event.evDate.strftime("%Y-%m-%d").split('-')[1]
+                            }} -
+                            {{
+                            event.evDate.strftime("%Y-%m-%d").split('-')[2] }}
+                            <br>
+                            {{ event.evDate.strftime("%Y-%m-%d").split('-')[0]
+                            }}
+                        </div>
+                        {{event.content}}
+                    </div>
+                </div>
+            </td>
+            {% if loop.index % 5 == 0 or loop.last %}
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+    {% endif %}
+
 </div>
 
 {% endblock %}
