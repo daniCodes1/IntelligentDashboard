@@ -1,3 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Bubblegum+Sans&display=swap');
+
+
+
 body {
-  background-color: rgb(252, 235, 186);
+  background-color: lightgray
+}
+
+.form-container {
+  /* position: fixed;
+  bottom: 0; */
+  width: 100%;
+  /* background-color: #f1f1f1; */
+  padding: 20px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.list-events th,
+.list-events td {
+  padding: 8px;
+  text-align: center;
+  border: 3px solid #ddd;
+}
+
+.list-events tr:hover {
+  background-color: #f2f2f2;
+}
+
+.list-events th {
+  background-color: #f2f2f2;
 }
