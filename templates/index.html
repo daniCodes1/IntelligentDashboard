@@ -9,11 +9,37 @@
     <h1> Events </h1>
     <div class="form-container">
         <h3> Add an event to your calendar: </h3>
-        <form action="/" method="POST">
+        <form action="/" method="POST" onsubmit="return validateDate()">
             <input type="text" name="content" id="content" />
             <input type="date" name="event-date" id="event-date" />
             <input type="submit" value="Add Event" id="btn_add" />
         </form>
+        <div id="error-message" style="display: none;">Invalid date
+            selected.</div>
+        <script> 
+        // Check the year
+        function validateDate() {
+            var eventDate = document.getElementById('event-date').value;
+            var eventDateObj = new Date(eventDate);
+            var currentDate = new Date();
+
+            // Don't want to compare the time, just date & month
+            eventDateObj.setHours(0, 0, 0, 0);
+            currentDate.setHours(0, 0, 0, 0);
+
+            // Compare the dates
+            if (eventDateObj.getTime() < currentDate.getTime()) {
+                document.getElementById('error-message').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('error-message').style.display = 'none';
+                }, 1500);
+                // Prevent form submission
+                return false; 
+            }
+            // Allow form submission    
+            return true; 
+        }
+        </script>
     </div>
 
     {% if events | length < 1 %}
