@@ -8,7 +8,7 @@
 <div class="content">
     <h1> Events </h1>
     <div class="form-container">
-        <h3> Add an event to your calendar: </h1>
+        <h3> Add an event to your calendar: </h3>
         <form action="/" method="POST">
             <input type="text" name="content" id="content" />
             <input type="date" name="event-date" id="event-date" />
@@ -19,24 +19,6 @@
     {% if events | length < 1 %}
     <h3> You have no upcoming events. </h3>
     {% else %}
-    <table class="list-events">
-        <tr>
-            <th>EVENT</th>
-            <th>DATE</th>
-            <th>ACTIONS</th>
-        </tr>
-        {% for event in events %}
-        <tr>
-            <td>{{event.content}}</td>
-            <td>{{event.evDate.strftime("%Y-%m-%d")}}</td>
-            <td>
-                <a href="/delete/{{event.id}}">Delete</a>
-                <a href="/edit/{{event.id}}">Edit</a>
-                <br>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
 
     <!-- <h1 class="event-title"> Your upcoming events </h1> -->
     <img src="static/upcoming-events.webp" alt="Upcoming Events icon"
@@ -56,10 +38,15 @@
                             {{
                             event.evDate.strftime("%Y-%m-%d").split('-')[2] }}
                             <br>
-                            {{ event.evDate.strftime("%Y-%m-%d").split('-')[0]
-                            }}
+                            <div class="year-bubble">
+                                {{
+                                event.evDate.strftime("%Y-%m-%d").split('-')[0]
+                                }}
+                            </div>
                         </div>
-                        {{event.content}}
+                        <div class="event-content">
+                            {{ event.content }}
+                        </div>
                     </div>
                 </div>
             </td>
@@ -69,6 +56,26 @@
         {% endfor %}
     </table>
     {% endif %}
+
+    <h1>Manage your events</h1>
+    <table class="list-events">
+        <tr>
+            <th style="width: 50%">EVENT</th>
+            <th style="width: 30%">DATE</th>
+            <th style="width: 20%">ACTIONS</th>
+        </tr>
+        {% for event in events %}
+        <tr>
+            <td>{{event.content}}</td>
+            <td>{{event.evDate.strftime("%Y-%m-%d")}}</td>
+            <td>
+                <a href="/delete/{{event.id}}" class="btn">Delete</a>
+                <a href="/edit/{{event.id}}" class="btn">Edit</a>
+
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
 
 </div>
 
