@@ -14,7 +14,7 @@
             <input type="date" name="event-date" id="event-date" />
             <input type="submit" value="Add Event" id="btn_add" />
         </form>
-        <div id="error-message" style="display: none;">Invalid date
+        <div id="error-message" style="visibility: hidden;">Invalid date
             selected.</div>
         <script> 
         // Check the year
@@ -29,9 +29,9 @@
 
             // Compare the dates
             if (eventDateObj.getTime() < currentDate.getTime()) {
-                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').style.visibility = 'visible';
                 setTimeout(() => {
-                    document.getElementById('error-message').style.display = 'none';
+                    document.getElementById('error-message').style.visibility = 'hidden';
                 }, 1500);
                 // Prevent form submission
                 return false; 
