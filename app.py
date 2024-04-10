@@ -11,16 +11,19 @@ db = SQLAlchemy(app)
 
 # Create Model
 # Data class = Row of data
+
+
 class MyEvent(db.Model):
     # ID is unique:
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(100), nullable=False)
     complete = db.Column(db.Integer, default=0)
-    evDate = db.Column(db.DateTime, default=datetime.utcnow) # TO DO: PST
+    evDate = db.Column(db.DateTime, default=datetime.utcnow)  # TO DO: PST
 
     # Give data back
     def __repr__(self) -> str:
         return f"Event {self.id}"
+
 
 # Home page
 @app.route("/", methods=["POST", "GET"])
@@ -30,27 +33,30 @@ def index():
         current_event = request.form['content']
         event_date = request.form['event-date']
         # Convert to Python datetime object
-        event_date_py =  datetime.strptime(event_date, "%Y-%m-%d")
-        new_event = MyEvent(content=current_event, evDate = event_date_py)
+        event_date_py = datetime.strptime(event_date, "%Y-%m-%d")
+        new_event = MyEvent(content=current_event, evDate=event_date_py)
 
         # Try to establish a database connection
-        try: 
+        try:
             db.session.add(new_event)
             db.session.commit()
             # Return to home page
             return redirect("/")
+
         except Exception as e:
             print(f"Error: {e}")
             return f"Error: {e}"
-        
+
     # See all current events
     else:
         # Sort by calendar events by date
         events = MyEvent.query.order_by(MyEvent.evDate).all()
-        print(events)
         return render_template("index.html", events=events)
 
+
 # Delete a calendar event
+
+
 @app.route("/delete/<int:id>")
 # ID will be an integer
 def delete(id):
@@ -61,27 +67,28 @@ def delete(id):
         return redirect("/")
     except Exception as e:
         return f"Error: {e}"
-    
+
 # Edit a calendar event
+
+
 @app.route("/edit/<int:id>", methods=['GET', 'POST'])
 def edit(id):
     ev = MyEvent.query.get_or_404(id)
     if request.method == "POST":
         ev.content = request.form['content']
         ev.evDate = datetime.strptime(request.form['event-date'], "%Y-%m-%d")
-        try: 
+        try:
             db.session.commit()
             return redirect("/")
         except Exception as e:
             return f"Error: {e}"
     else:
-        return render_template('edit.html', event = ev) # Event gets used in the html
+        # Event gets used in the html
+        return render_template('edit.html', event=ev)
+
 
 if __name__ in "__main__":
     with app.app_context():
         # Create the database
         db.create_all()
     app.run(debug=True)
-
-
-
