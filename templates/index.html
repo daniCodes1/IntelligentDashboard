@@ -9,17 +9,32 @@
     <h1> Events </h1>
     <div class="form-container">
         <h3> Add an event to your calendar: </h3>
-        <form action="/" method="POST" onsubmit="return validateDate()">
+        <form action="/" method="POST" onsubmit="return validateInput()">
             <input type="text" name="content" id="content" />
             <input type="date" name="event-date" id="event-date" />
             <input type="submit" value="Add Event" id="btn_add" />
         </form>
-        <div id="error-message" style="visibility: hidden;">Invalid date
-            selected.</div>
+        <div class="error-message hidden"></div>
+
         <script> 
-        // Check the year
-        function validateDate() {
+        
+        function validateInput() {
             var eventDate = document.getElementById('event-date').value;
+            var content = document.getElementById('content').value;
+
+            if (eventDate === "" || content === "") {
+            updateError("Cannot have empty inputs.")
+            // Prevent form submission
+            return false;
+            }
+
+            const regex = /^\d{4}-\d{2}-\d{2}$/;
+            if (!(regex.test(eventDate))) {
+               updateError("Invalid date format")
+               return false;
+            }
+
+            // Can create date object
             var eventDateObj = new Date(eventDate);
             var currentDate = new Date();
 
@@ -29,16 +44,22 @@
 
             // Compare the dates
             if (eventDateObj.getTime() < currentDate.getTime()) {
-                document.getElementById('error-message').style.visibility = 'visible';
-                setTimeout(() => {
-                    document.getElementById('error-message').style.visibility = 'hidden';
-                }, 1500);
-                // Prevent form submission
+                updateError("Date can't be past.")
                 return false; 
             }
-            // Allow form submission    
-            return true; 
-        }
+
+            return true;
+            }
+
+            function updateError(msg) {
+                document.querySelector('.error-message').classList.remove('hidden');
+                document.querySelector('.error-message').innerHTML = msg;
+                
+                setTimeout(() => {
+                    document.querySelector('.error-message').classList.add('hidden');
+                    }, 1500);
+            }
+        
         </script>
     </div>
 
@@ -59,10 +80,10 @@
                 <div class="card">
                     <div class="card-content">
                         <div class="date-box">
-                            {{ event.evDate.strftime("%Y-%m-%d").split('-')[1]
-                            }} -
+                            {{ event.evDate.strftime("%B")
+                            }}
                             {{
-                            event.evDate.strftime("%Y-%m-%d").split('-')[2] }}
+                            event.evDate.strftime("%d") }}
                             <br>
                             <div class="year-bubble">
                                 {{
