@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title> Calendar </title>
+{% endblock %}
+
+{% block body %}
+
+<div class="content" style="text-align: center;">
+    <h1> Edit your event </h1>
+    <form action="/edit/{{event.id}}" method="POST">
+        <input type="text" name="content" id="content"
+            value="{{event.content}}" />
+        <input type="date" name="event-date" id="event-date"
+            value="{{event.evDate.strftime('%Y-%m-%d')}}" />
+
+        <input type="submit" value="Done" />
+    </form>
+</div>
+
+{% endblock %}
