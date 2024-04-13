@@ -26,9 +26,28 @@ class MyEvent(db.Model):
 
 
 # Home page
-@app.route("/", methods=["POST", "GET"])
+@app.route("/")
 def index():
-    # Add an event
+    return render_template("dashboard.html")
+
+
+@app.route("/delete/<int:id>")
+# ID will be an integer
+def delete(id):
+    delete_event = MyEvent.query.get_or_404(id)
+    try:
+        db.session.delete(delete_event)
+        db.session.commit()
+        return redirect("/calendar")
+    except Exception as e:
+        return f"Error: {e}"
+
+
+# Get to calendar page
+
+@app.route("/calendar", methods=["POST", "GET"])
+# Add an event
+def calendar():
     if request.method == "POST":
         current_event = request.form['content']
         event_date = request.form['event-date']
@@ -41,7 +60,7 @@ def index():
             db.session.add(new_event)
             db.session.commit()
             # Return to home page
-            return redirect("/")
+            return redirect("/calendar")
 
         except Exception as e:
             print(f"Error: {e}")
@@ -51,22 +70,7 @@ def index():
     else:
         # Sort by calendar events by date
         events = MyEvent.query.order_by(MyEvent.evDate).all()
-        return render_template("index.html", events=events)
-
-
-# Delete a calendar event
-
-
-@app.route("/delete/<int:id>")
-# ID will be an integer
-def delete(id):
-    delete_event = MyEvent.query.get_or_404(id)
-    try:
-        db.session.delete(delete_event)
-        db.session.commit()
-        return redirect("/")
-    except Exception as e:
-        return f"Error: {e}"
+        return render_template("calendar.html", events=events)
 
 # Edit a calendar event
 
@@ -79,7 +83,7 @@ def edit(id):
         ev.evDate = datetime.strptime(request.form['event-date'], "%Y-%m-%d")
         try:
             db.session.commit()
-            return redirect("/")
+            return redirect("/calendar")
         except Exception as e:
             return f"Error: {e}"
     else:
