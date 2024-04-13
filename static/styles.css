@@ -6,19 +6,117 @@ body {
   background-color: lightgray
 }
 
+.content h1 {
+  text-align: center;
+}
+
+a {
+  text-decoration: none;
+  color: red;
+  font-family: "Comic Sans";
+  font-weight: bold;
+}
+
+.btn {
+  display: inline-block;
+  padding: 6px 10px;
+  background-color: rgb(202, 53, 11);
+  color: white;
+  border-radius: 10px;
+}
+
+/* Add event form */
+
 .form-container {
   /* position: fixed;
   bottom: 0; */
   width: 100%;
   /* background-color: #f1f1f1; */
   padding: 20px;
+  text-align: center;
 }
 
+/* General table */
 table {
   border-collapse: collapse;
   width: 100%;
 }
 
+/* Events calendar display */
+.events-img {
+  margin-top: 70px;
+  margin-left: 45%
+}
+
+.event-table {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.card {
+  background-color: #f2f1cf;
+  border: 10px solid darkred;
+  border-top: 60px solid darkred;
+  border-radius: 8px;
+  margin: 30px 25px;
+  height: 175px;
+  width: 175px;
+  position: relative;
+  /* drop shadow */
+  box-shadow: 5px 8px 8px rgba(0, 0, 0, 1);
+}
+
+.card::before,
+.card::after {
+  content: "";
+  position: absolute;
+  border-radius: 15px;
+  top: -75px;
+  bottom: 205px;
+  width: 15px;
+  background-image: linear-gradient(TO RIGHT, #000000, rgb(209, 211, 213) 100%);
+}
+
+.card::before {
+  left: 20px;
+}
+
+.card::after {
+  right: 20px;
+}
+
+.card-content {
+  padding: 15px 5px;
+}
+
+.date-box {
+  font-size: 18px;
+  font-family: 'Comic Sans MS', cursive;
+  font-weight: bold;
+  text-align: center;
+  background-color: rgb(219, 218, 171);
+  padding: 8px 5px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.year-bubble {
+  font-size: 11px;
+}
+
+.event-content {
+  font-size: 15px;
+  text-align: center;
+}
+
+
+.hidden {
+  display: none;
+}
+
+
+/* Events list and editing functionality */
 .list-events th,
 .list-events td {
   padding: 8px;
