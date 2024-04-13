@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Course Planner</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Productivity Planner</h1>
+    </header>
+    <div class="wrapper">
+      <div class="stats">
+        <h2> YOUR STATISTICS </h2>
+        <h3> Duration left: </h3>
+        <h4 id="countdown"> 0 hours, 0 minutes </h4>
+        <h3> Difficulty level: </h3>
+        <h4 id="stat-difficulty"> No tasks </h4>
+        <h3> Progress towards goal: </h3>
+        <h4 id="goal-progress"> Goal not set </h4>
+
+        <!-- <h3> Progress towards goal: </h3>
+        <h4> 0% </h4> -->
+
+        <h3> Need a boost? </h3>
+        <button class="btn quote"> Motivational Quote </button>
+        <button onclick="togglePopup(event)" class="btn goal-btn">Set a
+          goal</button>
+        <h1 class="user-quote hidden"> </h1>
+
+        <div class="popup-overlay" id="popupOverlay">
+          <div class="popup" id="popup">
+            <form>
+              <label for="gname">Set your goal (number of minutes of
+                work)</label><br>
+              <input type="text" id="gname" name="gname"><br>
+              <button onclick="togglePopupAndAddGoal(event)"
+                class="btn">Done</button>
+              <button onclick="togglePopup(event)"
+                class="btn back-btn">Back</button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="main-screen">
+        <h2> YOUR TASKS </h2>
+        <h3 class="congrats hidden"> Congratulations! All tasks are
+          finished, you are a productivity legend! 🤩 </h3>
+        <div class="row">
+          <div class="column1"></div>
+          <div class="column2"></div>
+        </div>
+
+        <!-- <div class="box" id="one" draggable="true" ondragstart="drag(event)">
+          English discussion post
+          <h5> [5 minutes] </h5>
+        </div>
+        <div class="box" id="two" draggable="true" ondragstart="drag(event)">
+          stats webwork 6
+          <h5> [60 minutes] </h5>
+        </div>
+        <div class="box" id="three" draggable="true" ondragstart="drag(event)">
+          buy birthday card
+          <h5> [25 minutes]</h5>
+        </div>
+        <div class="box" id="four" draggable="true" ondragstart="drag(event)">
+          vacuum kitchen
+          <h5> [15 minutes] </h5>
+        </div>
+        <div class="box" id="five" draggable="true" ondragstart="drag(event)">
+          finish English essay
+          <h5> [90 minutes] </h5>
+        </div> -->
+      </div>
+
+      <div class="add-tasks">
+        <h2> ADD A TASK </h2>
+        <form>
+          <label for="tname">Task name:</label><br>
+          <input type="text" id="tname" name="tname"><br><br><br>
+          <label for="duration">Duration (minutes):</label><br>
+          <input type="text" id="duration" name="duration"><br><br><br>
+          <label for="resources">Difficulty level (1 to 10):</label><br>
+          <input type="text" id="difficulty" name="difficulty"><br>
+          <button class="btn add"> Add </button>
+        </form>
+      </div>
+
+      <!-- <div class="show-ai-feedback">
+        <h2> FEEDBACK: </h2>
+        <h3> AI feedback based on your statistics will be placed here </h3>
+
+      </div> -->
+
+      <div class="timer-class">
+
+        <h2> SET TIMER </h2>
+        <button class="btn study-timer"> Pomodoro Timer </button>
+        <button class="btn stop-timer"> Stop timer </button>
+        <div class="update-timer hidden">
+          <h4 id="interval-name"> Current interval: </h4>
+          <h3 class="current"></h3>
+        </div>
+        <div class="progress-container hidden">
+          <div class="progress-bar"></div>
+        </div>
+        <br>
+        <a
+          href="https://todoist.com/productivity-methods/pomodoro-technique"
+          class="pomodoro-link">What
+          is the Pomodoro technique?</a>
+
+      </div>
+
+      <div class="remove-tasks" ondrop="drop(event)"
+        ondragover="allowDrop(event)">
+        <!-- this here -->
+        <h2> REMOVE A TASK </h2>
+        <h3 class="drop-zone"> Drag here </h3>
+        <div class="last-removed hidden"> Hello </div>
+        <div class="btn-actions">
+          <button class="btn undo">Undo</button>
+          <button class="btn redo">Redo</button>
+        </div>
+      </div>
+    </div>
+    <script src="app.js"> </script>
+  </body>
+</html>
